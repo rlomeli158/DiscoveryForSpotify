@@ -6,12 +6,12 @@ import { useState } from "react";
 import SearchResult from "./SearchResults";
 
 const token =
-  "BQB-0OjyVLvYxweKf2UkvjwS6z292wwYz3151neexEAfbqRKDPRYz0ShJvh435XWo_zqNDIBPYOw-sdb8EKU_tszBfKIw8M3OXnptSz5zGsZdzVAaee5LP-QmFNQaN8vBBLLqwyjqeAUEg";
+  "BQBxG0qlfo5T30npkQGdpPca0vFMQGQ-Ur04dodUV1ZgPVS0khZzbYNMVZDm-_A2kLg0r35rv5LROe9zYKelLduSi1k3gRRyPTDHIc-7bk_cWLIy3Vq61Y8WMlZCDQA2VUOq8CwwFctRBg";
 
 export default function SearchField({ onFocus = () => {}, error }) {
   const [isFocused, setIsFocused] = useState(false);
   const [artistData, setArtistData] = useState([]);
-  const [searchFilter, setSearchFilter] = useState("Artists");
+  const [searchFilter, setSearchFilter] = useState("artist");
   const [showFilters, setShowFilters] = useState(true);
 
   return (
@@ -44,7 +44,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
               } else {
                 try {
                   let spotifyResponse = await fetch(
-                    `https://api.spotify.com/v1/search?q=${newText}&type=${title.toLowerCase()}`,
+                    `https://api.spotify.com/v1/search?q=${newText}&type=${searchFilter}`,
                     {
                       headers: {
                         "Content-Type": "application/json",
@@ -53,6 +53,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
                     }
                   );
                   let responseJson = await spotifyResponse.json();
+                  console.log(responseJson.artists.items);
                   setShowFilters(false);
                   setArtistData(responseJson.artists.items);
                 } catch (err) {
@@ -68,7 +69,13 @@ export default function SearchField({ onFocus = () => {}, error }) {
               setIsFocused(false);
             }}
             style={styles.fieldDescription}
-            placeholder={`${searchFilter.slice(0, -1)}'s name...`}
+            placeholder={
+              searchFilter == "artist"
+                ? "Artist's name..."
+                : searchFilter == "track"
+                ? "Song's name"
+                : "Select genre(s)"
+            }
             placeholderTextColor={CustomColors.dark.placeholderColor}
           />
         </View>
@@ -81,13 +88,13 @@ export default function SearchField({ onFocus = () => {}, error }) {
               styles.button,
               {
                 backgroundColor:
-                  searchFilter === "Artists"
+                  searchFilter === "artist"
                     ? CustomColors.dark.primaryColor
                     : CustomColors.dark.formBackground,
               },
             ]}
             onPress={() => {
-              setSearchFilter("Artists");
+              setSearchFilter("artist");
             }}
           >
             <Text style={styles.text}>Artists</Text>
@@ -97,13 +104,13 @@ export default function SearchField({ onFocus = () => {}, error }) {
               styles.button,
               {
                 backgroundColor:
-                  searchFilter === "Songs"
+                  searchFilter === "track"
                     ? CustomColors.dark.primaryColor
                     : CustomColors.dark.formBackground,
               },
             ]}
             onPress={() => {
-              setSearchFilter("Songs");
+              setSearchFilter("track");
             }}
           >
             <Text style={styles.text}>Songs</Text>
@@ -113,13 +120,13 @@ export default function SearchField({ onFocus = () => {}, error }) {
               styles.button,
               {
                 backgroundColor:
-                  searchFilter === "Genres"
+                  searchFilter === "genre"
                     ? CustomColors.dark.primaryColor
                     : CustomColors.dark.formBackground,
               },
             ]}
             onPress={() => {
-              setSearchFilter("Genres");
+              setSearchFilter("genre");
             }}
           >
             <Text style={styles.text}>Genres</Text>
