@@ -12,15 +12,16 @@ export default function TabOneScreen({
   return (
     <ScrollView style={styles.container}>
       <View>
-        <Text style={styles.title}>Let's find some new music</Text>
+        {/* <Text style={styles.title}>Let's find some new music</Text>
         <Text style={styles.subtitle}>
           Select up to 5 artists, songs, and genres
-        </Text>
+        </Text> */}
+        <Text style={styles.pageHeader}>Discover</Text>
       </View>
       <View>
-        <SearchField title="Artist" placeholder="Artist's name..." error="" />
-        <SearchField title="Song" placeholder="Song's name..." error="" />
-        <SearchField title="Genre" placeholder="Genre's name..." error="" />
+        <SearchField error="" />
+        {/* <SearchField title="Song" placeholder="Song's name..." error="" />
+        <SearchField title="Genre" placeholder="Genre's name..." error="" /> */}
       </View>
     </ScrollView>
   );
@@ -48,5 +49,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     height: 1,
     width: "100%",
+  },
+  pageHeader: {
+    fontSize: 25,
+    textAlign: "left",
+    marginBottom: 5,
   },
 });

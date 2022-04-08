@@ -1,25 +1,22 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import { ScrollView, StyleSheet, TextInput } from "react-native";
+import { Pressable, StyleSheet, TextInput } from "react-native";
 import { Text, View } from "./Themed";
 import CustomColors from "../constants/Colors";
 import { useState } from "react";
 import SearchResult from "./SearchResults";
 
 const token =
-  "BQA4zrVQ0Pq8EdhRFBtiqhI8_4XJAOZvF53_IZGf5MU5xhI0iriCDs8pN4WMC5RMsp3K-DJBFaobVBjgK9s7D8dUHM0Z0VpYRBCi5NJvY9VZ5Quka7hndxxxZV8ZEQnSMVrbtN5FCDE3YA";
+  "BQB-0OjyVLvYxweKf2UkvjwS6z292wwYz3151neexEAfbqRKDPRYz0ShJvh435XWo_zqNDIBPYOw-sdb8EKU_tszBfKIw8M3OXnptSz5zGsZdzVAaee5LP-QmFNQaN8vBBLLqwyjqeAUEg";
 
-export default function SearchField({
-  title,
-  onFocus = () => {},
-  error,
-  ...props
-}) {
+export default function SearchField({ onFocus = () => {}, error }) {
   const [isFocused, setIsFocused] = useState(false);
-  const [artistData, setArtistData] = useState();
+  const [artistData, setArtistData] = useState([]);
+  const [searchFilter, setSearchFilter] = useState("Artists");
+  const [showFilters, setShowFilters] = useState(true);
+
   return (
     <View>
       <View style={styles.input}>
-        <Text style={styles.fieldName}>{title}</Text>
         <View
           style={[
             styles.inputContainer,
@@ -43,9 +40,9 @@ export default function SearchField({
             onChangeText={async (newText) => {
               if (!newText) {
                 setArtistData([]);
+                setShowFilters(true);
               } else {
                 try {
-                  // console.log("hello");
                   let spotifyResponse = await fetch(
                     `https://api.spotify.com/v1/search?q=${newText}&type=${title.toLowerCase()}`,
                     {
@@ -56,8 +53,8 @@ export default function SearchField({
                     }
                   );
                   let responseJson = await spotifyResponse.json();
+                  setShowFilters(false);
                   setArtistData(responseJson.artists.items);
-                  // console.log(responseJson.artists.items);
                 } catch (err) {
                   error = err;
                 }
@@ -71,31 +68,98 @@ export default function SearchField({
               setIsFocused(false);
             }}
             style={styles.fieldDescription}
-            {...props}
+            placeholder={`${searchFilter.slice(0, -1)}'s name...`}
             placeholderTextColor={CustomColors.dark.placeholderColor}
           />
         </View>
       </View>
-      {artistData ? <SearchResult artistData={artistData} /> : null}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {showFilters ? (
+        <View style={styles.buttonRow}>
+          <Pressable
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  searchFilter === "Artists"
+                    ? CustomColors.dark.primaryColor
+                    : CustomColors.dark.formBackground,
+              },
+            ]}
+            onPress={() => {
+              setSearchFilter("Artists");
+            }}
+          >
+            <Text style={styles.text}>Artists</Text>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  searchFilter === "Songs"
+                    ? CustomColors.dark.primaryColor
+                    : CustomColors.dark.formBackground,
+              },
+            ]}
+            onPress={() => {
+              setSearchFilter("Songs");
+            }}
+          >
+            <Text style={styles.text}>Songs</Text>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  searchFilter === "Genres"
+                    ? CustomColors.dark.primaryColor
+                    : CustomColors.dark.formBackground,
+              },
+            ]}
+            onPress={() => {
+              setSearchFilter("Genres");
+            }}
+          >
+            <Text style={styles.text}>Genres</Text>
+          </Pressable>
+        </View>
+      ) : null}
+      {artistData ? <SearchResult artistData={artistData} /> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    elevation: 3,
+    backgroundColor: CustomColors.dark.primaryColor,
+    marginHorizontal: 10,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
   icon: {
     marginRight: 5,
   },
   input: {
     marginTop: 5,
     flexDirection: "row",
+    width: "100%",
   },
   inputContainer: {
     height: 40,
-    width: "80%",
+    width: "100%",
     backgroundColor: CustomColors.dark.formBackground,
     flexDirection: "row",
-    marginHorizontal: 15,
     paddingHorizontal: 5,
     borderWidth: 0.5,
     alignItems: "center",
