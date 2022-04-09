@@ -1,29 +1,29 @@
+import React, { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, TextInput } from "react-native";
 import { Text, View } from "./Themed";
 import CustomColors from "../constants/Colors";
-import { useState } from "react";
-import SearchResult from "./SearchResults";
+import SearchResults from "./SearchResults";
 
 const token =
-  "BQBxG0qlfo5T30npkQGdpPca0vFMQGQ-Ur04dodUV1ZgPVS0khZzbYNMVZDm-_A2kLg0r35rv5LROe9zYKelLduSi1k3gRRyPTDHIc-7bk_cWLIy3Vq61Y8WMlZCDQA2VUOq8CwwFctRBg";
+  "BQDJZiRxdEyvloy-q46CTOcyD_LvU95tpPMQlZcQ5m-O-FeQUaIYYIYqB6BUpft0jUrZhQbT01btBgnPvylJYBbe3o-F21KkYwt-tWOMPns6zdg4m7fb4W6Qa685oyQud2Wx_ggrmFhZSg";
 
 export default function SearchField({ onFocus = () => {}, error }) {
   const [isFocused, setIsFocused] = useState(false);
   const [artistData, setArtistData] = useState([]);
   const [searchFilter, setSearchFilter] = useState("artist");
   const [showFilters, setShowFilters] = useState(true);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   return (
     <View>
+      <Text>{selectedItems}</Text>
       <View style={styles.input}>
         <View
           style={[
             styles.inputContainer,
             {
-              borderColor: error
-                ? CustomColors.dark.error
-                : isFocused
+              borderColor: isFocused
                 ? CustomColors.dark.primaryColor
                 : CustomColors.dark.primaryText,
             },
@@ -53,9 +53,13 @@ export default function SearchField({ onFocus = () => {}, error }) {
                     }
                   );
                   let responseJson = await spotifyResponse.json();
-                  console.log(responseJson.artists.items);
+                  // console.log(responseJson);
                   setShowFilters(false);
-                  setArtistData(responseJson.artists.items);
+                  if (searchFilter == "artist") {
+                    setArtistData(responseJson.artists.items);
+                  } else {
+                    setArtistData(responseJson.tracks.items);
+                  }
                 } catch (err) {
                   error = err;
                 }
@@ -80,7 +84,6 @@ export default function SearchField({ onFocus = () => {}, error }) {
           />
         </View>
       </View>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
       {showFilters ? (
         <View style={styles.buttonRow}>
           <Pressable
@@ -133,10 +136,23 @@ export default function SearchField({ onFocus = () => {}, error }) {
           </Pressable>
         </View>
       ) : null}
-      {artistData ? <SearchResult artistData={artistData} /> : null}
+      {artistData
+        ? renderSearchResults(artistData, selectedItems, setSelectedItems)
+        : null}
     </View>
   );
 }
+
+const renderSearchResults = (artistData, selectedItems, setSelectedItems) => {
+  return (
+    <SearchResults
+      artistData={artistData}
+      selectedItems={selectedItems}
+      setSelectedItems={setSelectedItems}
+      dummyFunction={setSelectedItems}
+    />
+  );
+};
 
 const styles = StyleSheet.create({
   button: {
