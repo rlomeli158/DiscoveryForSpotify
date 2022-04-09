@@ -17,7 +17,7 @@ export default function CustomSlider({ data }) {
     data: data,
     renderItem: CarouselItem,
     hasParallaxImages: true,
-    onSnapToItem: (index) => setSlideIndex(index), //add this in 'settings' variable.
+    onSnapToItem: (index) => setSlideIndex(index),
   };
   return (
     <View style={styles.carouselContainer}>

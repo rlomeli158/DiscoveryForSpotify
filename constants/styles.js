@@ -4,7 +4,7 @@ import CustomColors from "./Colors";
 const { width: screenWidth } = Dimensions.get("window");
 const styles = StyleSheet.create({
   carouselContainer: {
-    paddingTop: 30,
+    paddingTop: 15,
   },
   carouselTitle: {
     fontSize: 20,
@@ -38,6 +38,20 @@ const styles = StyleSheet.create({
   },
   inactiveDotStyle: {
     backgroundColor: CustomColors.dark.placeholderColor,
+  },
+  songInfoContainer: {
+    justifyContent: "center",
+    flex: 1,
+  },
+  artistName: {
+    fontSize: 15,
+  },
+  artistNameWithSong: {
+    fontSize: 13,
+    color: CustomColors.dark.primaryColor,
+  },
+  songName: {
+    fontSize: 15,
   },
 });
 export default styles;

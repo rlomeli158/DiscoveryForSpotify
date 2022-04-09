@@ -1,27 +1,64 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, TextInput } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { Text, View } from "./Themed";
 import CustomColors from "../constants/Colors";
 import SearchResults from "./SearchResults";
 import CustomSlider from "./CustomSlider";
-import data from "../constants/dummyData";
+import { useNavigation } from "@react-navigation/native";
 
 const token =
-  "BQC77nEt587lZl-nsrNVKwS8GSeFeazOy3pjtcBP7tMcSWQ8yHhW3utW89GtDrxZjT92GvJ4GaP1HoVt2kftkWg-FRSbrpkmnzXJPazpz7EVrSMV-JrETjQvI7PxVUKm0AXMwfttGqoDfA";
+  "BQC_JnD-M2_FlOtRHscK3NKej-LK1pV2mBMuupOFDxDnoCjBGJtAki_-APbhCQXPp-GTjN0wQkQOcT9cJTHE79HNzJKs3T7DVP4k76z6jZKhjzG9qyTw6IZTX8RoW7tZKvb4EcNLiTPQtA";
 
 export default function SearchField({ onFocus = () => {}, error }) {
+  const navigation = useNavigation();
+
   const [isFocused, setIsFocused] = useState(false);
   const [artistData, setArtistData] = useState([]);
+  const [text, setText] = useState("");
   const [searchFilter, setSearchFilter] = useState("artist");
   const [showFilters, setShowFilters] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
+
+  useEffect(() => {
+    setText("");
+    setArtistData([]);
+    setShowFilters(true);
+  }, [selectedItems]);
 
   return (
     <View>
       <View>
         <CustomSlider data={selectedItems} />
       </View>
+      {selectedItems.length > 0 ? (
+        <Pressable
+          style={[
+            styles.button,
+            {
+              backgroundColor: CustomColors.dark.primaryColor,
+              margin: 5,
+            },
+          ]}
+          onPress={() =>
+            callGetRecommendations(selectedItems, navigation, {
+              setText,
+              setArtistData,
+              setSearchFilter,
+              setShowFilters,
+              setSelectedItems,
+            })
+          }
+        >
+          <Text style={styles.text}>Find Recommendations</Text>
+        </Pressable>
+      ) : null}
+
       <View style={styles.input}>
         <View
           style={[
@@ -45,7 +82,12 @@ export default function SearchField({ onFocus = () => {}, error }) {
               if (!newText) {
                 setArtistData([]);
                 setShowFilters(true);
+                setText("");
               } else {
+                setText(newText);
+                console.log(
+                  `https://api.spotify.com/v1/search?q=${newText}&type=${searchFilter}`
+                );
                 try {
                   let spotifyResponse = await fetch(
                     `https://api.spotify.com/v1/search?q=${newText}&type=${searchFilter}`,
@@ -57,7 +99,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
                     }
                   );
                   let responseJson = await spotifyResponse.json();
-                  // console.log(responseJson);
+                  console.log(responseJson);
                   setShowFilters(false);
                   if (searchFilter == "artist") {
                     setArtistData(responseJson.artists.items);
@@ -85,6 +127,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
                 : "Select genre(s)"
             }
             placeholderTextColor={CustomColors.dark.placeholderColor}
+            value={text}
           />
         </View>
       </View>
@@ -153,9 +196,68 @@ const renderSearchResults = (artistData, selectedItems, setSelectedItems) => {
       artistData={artistData}
       selectedItems={selectedItems}
       setSelectedItems={setSelectedItems}
-      dummyFunction={setSelectedItems}
     />
   );
+};
+
+const callGetRecommendations = async (
+  selectedItems,
+  navigation,
+  stateSetters
+) => {
+  let spotifyUrl = "https://api.spotify.com/v1/recommendations?&limit=10&";
+  let encodedArtistIds = "";
+  let encodedTrackIds = "";
+  // console.log("look!", selectedItems);
+  selectedItems.forEach((item) => {
+    if (item.type === "artist") {
+      encodedArtistIds += item.id + ",";
+    } else if (item.type === "track") {
+      encodedTrackIds += item.id + ",";
+    }
+  });
+
+  encodedArtistIds = encodedArtistIds.slice(0, -1);
+  encodedTrackIds = encodedTrackIds.slice(0, -1);
+
+  if (encodedArtistIds && encodedTrackIds) {
+    spotifyUrl +=
+      "seed_artists=" +
+      encodeURIComponent(encodedArtistIds) +
+      "&seed_tracks=" +
+      encodeURIComponent(encodedTrackIds);
+  } else if (encodedArtistIds) {
+    spotifyUrl += "seed_artists=" + encodeURIComponent(encodedArtistIds);
+  } else if (encodedTrackIds) {
+    spotifyUrl += "seed_tracks=" + encodeURIComponent(encodedTrackIds);
+  }
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    let responseJson = await spotifyResponse.json();
+
+    clearState(stateSetters);
+    navigation.navigate("Recommendations", {
+      recommendedTracks: responseJson.tracks,
+    });
+
+    console.log("hi!");
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const clearState = (stateSetters) => {
+  stateSetters.setText("");
+  stateSetters.setArtistData([]);
+  stateSetters.setSearchFilter("artist");
+  stateSetters.setShowFilters(true);
+  stateSetters.setSelectedItems([]);
 };
 
 const styles = StyleSheet.create({

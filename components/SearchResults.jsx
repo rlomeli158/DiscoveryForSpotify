@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { FlatList, StyleSheet, Image, Button } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Image,
+  Button,
+  View as DefaultView,
+} from "react-native";
+import CustomColors from "../constants/Colors";
 import { Text, View } from "./Themed";
 
 const defaultImage =
@@ -41,17 +48,13 @@ export default function SearchResult({
                     : { uri: defaultImage }
                 }
               />
-              <View style={styles.textContainer}>
-                <Text style={styles.artistName}>{item.name}</Text>
-              </View>
-              {/* <Button
-                title="hi"
-                onPress={() => {
-                  console.log("hi");
-                  dummyFunction();
-                  // setSelectedItems(["hi"]);
-                }}
-              ></Button> */}
+              {item.artists && item.album ? (
+                renderSongInfo(item)
+              ) : (
+                <View style={styles.textContainer}>
+                  <Text style={styles.artistName}>{item.name}</Text>
+                </View>
+              )}
             </View>
           );
         }}
@@ -61,21 +64,52 @@ export default function SearchResult({
   );
 }
 
+const renderSongInfo = (songInfo) => {
+  const songName = songInfo.name;
+  const artists = songInfo.artists;
+  let artistString = "";
+  if (artists.length === 1) {
+    artistString += artists[0].name;
+    console.log(artistString);
+  } else {
+    artists.forEach((artist) => {
+      artistString += artist.name + ", ";
+    });
+    console.log(artistString);
+    artistString = artistString.slice(0, -2);
+  }
+  return (
+    <View style={styles.textContainer}>
+      <Text style={styles.songName}>{songName}</Text>
+      <Text style={styles.artistNameWithSong}>{artistString}</Text>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
     flexDirection: "row",
     padding: 2,
+    alignItems: "center",
   },
   textContainer: {
     justifyContent: "center",
+    flex: 1,
   },
   image: {
     width: 60,
     height: 60,
-    marginRight: 15,
+    marginRight: 10,
   },
   artistName: {
-    fontSize: 25,
+    fontSize: 15,
+  },
+  artistNameWithSong: {
+    fontSize: 13,
+    color: CustomColors.dark.primaryColor,
+  },
+  songName: {
+    fontSize: 15,
   },
 });
