@@ -4,9 +4,11 @@ import { Pressable, StyleSheet, TextInput } from "react-native";
 import { Text, View } from "./Themed";
 import CustomColors from "../constants/Colors";
 import SearchResults from "./SearchResults";
+import CustomSlider from "./CustomSlider";
+import data from "../constants/dummyData";
 
 const token =
-  "BQDJZiRxdEyvloy-q46CTOcyD_LvU95tpPMQlZcQ5m-O-FeQUaIYYIYqB6BUpft0jUrZhQbT01btBgnPvylJYBbe3o-F21KkYwt-tWOMPns6zdg4m7fb4W6Qa685oyQud2Wx_ggrmFhZSg";
+  "BQC77nEt587lZl-nsrNVKwS8GSeFeazOy3pjtcBP7tMcSWQ8yHhW3utW89GtDrxZjT92GvJ4GaP1HoVt2kftkWg-FRSbrpkmnzXJPazpz7EVrSMV-JrETjQvI7PxVUKm0AXMwfttGqoDfA";
 
 export default function SearchField({ onFocus = () => {}, error }) {
   const [isFocused, setIsFocused] = useState(false);
@@ -17,7 +19,9 @@ export default function SearchField({ onFocus = () => {}, error }) {
 
   return (
     <View>
-      <Text>{selectedItems}</Text>
+      <View>
+        <CustomSlider data={selectedItems} />
+      </View>
       <View style={styles.input}>
         <View
           style={[

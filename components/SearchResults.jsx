@@ -23,8 +23,8 @@ export default function SearchResult({
                 console.log(item.name, "Clicked");
                 console.log(selectedItems);
                 let newList = selectedItems.slice();
-                if (!newList.includes(item.name) && newList.length < 5) {
-                  newList.push(item.name);
+                if (!newList.includes(item) && newList.length < 5) {
+                  newList.push(item);
                   setSelectedItems(newList);
                 }
               }}
