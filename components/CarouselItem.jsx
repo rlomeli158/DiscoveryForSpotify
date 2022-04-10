@@ -10,12 +10,18 @@ function CarouselItem({ item, index }, parallaxProps) {
       <SafeAreaView style={styles.carouselItem}>
         <ParallaxImage
           source={
-            item.album
+            typeof item === typeof "string"
+              ? {
+                  uri: "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTU0fHxtdXNpY3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
+                }
+              : item.album
               ? item.album.images[0]
                 ? { uri: item.album.images[0].url }
                 : { uri: defaultImage }
-              : item.images[0]
-              ? { uri: item.images[0].url }
+              : item.images
+              ? item.images[0]
+                ? { uri: item.images[0].url }
+                : { uri: defaultImage }
               : { uri: defaultImage }
           }
           containerStyle={styles.carouselImageContainer}
@@ -24,10 +30,12 @@ function CarouselItem({ item, index }, parallaxProps) {
         />
         {item.artists && item.album ? (
           renderSongInfo(item)
-        ) : (
-          <Text style={styles.carouselTitle} numberOfLines={2}>
+        ) : item.images ? (
+          <Text style={styles.artistName} numberOfLines={2}>
             {item.name}
           </Text>
+        ) : (
+          <Text style={styles.artistName}>{item}</Text>
         )}
       </SafeAreaView>
     </Pressable>
@@ -40,12 +48,10 @@ const renderSongInfo = (songInfo) => {
   let artistString = "";
   if (artists.length === 1) {
     artistString += artists[0].name;
-    console.log(artistString);
   } else {
     artists.forEach((artist) => {
       artistString += artist.name + ", ";
     });
-    console.log(artistString);
     artistString = artistString.slice(0, -2);
   }
   return (

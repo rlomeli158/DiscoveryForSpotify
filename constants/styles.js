@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "lightblue",
     marginBottom: Platform.select({ ios: 0, android: 1 }), //handle rendering bug.
-    height: "85%",
+    height: "90%",
     width: "100%",
   },
   carouselImage: {
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   dotContainer: {
     backgroundColor: CustomColors.dark.background,
-    paddingTop: 10,
+    paddingTop: 0,
     paddingBottom: 10,
   },
   dotStyle: {
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   artistName: {
+    paddingTop: 10,
     fontSize: 15,
   },
   artistNameWithSong: {
@@ -51,6 +52,7 @@ const styles = StyleSheet.create({
     color: CustomColors.dark.primaryColor,
   },
   songName: {
+    paddingTop: 10,
     fontSize: 15,
   },
 });

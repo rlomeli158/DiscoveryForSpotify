@@ -6,7 +6,6 @@ import CustomColors from "../constants/Colors";
 
 const Recommendations = ({ route, navigation }) => {
   const { recommendedTracks } = route.params;
-  console.log("HI! IM HERE", recommendedTracks);
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Recommended For You</Text>

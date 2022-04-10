@@ -5,15 +5,17 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { Text, View } from "./Themed";
 import CustomColors from "../constants/Colors";
 import SearchResults from "./SearchResults";
 import CustomSlider from "./CustomSlider";
 import { useNavigation } from "@react-navigation/native";
+import GenreListings from "./GenreListings";
 
 const token =
-  "BQC_JnD-M2_FlOtRHscK3NKej-LK1pV2mBMuupOFDxDnoCjBGJtAki_-APbhCQXPp-GTjN0wQkQOcT9cJTHE79HNzJKs3T7DVP4k76z6jZKhjzG9qyTw6IZTX8RoW7tZKvb4EcNLiTPQtA";
+  "BQBoC7YhmrUI9fawqikFafcuREIQPMCNLkjehobdB0lb1LqSpiFNii22l6ln7jh3ncAwJI9XwUKzh2rWE1RzymA1y3oV4YYbvqcLq3QY20fbhlRJxymk7BdgThftwlGpQmyv8kJRfFNo3Q";
 
 export default function SearchField({ onFocus = () => {}, error }) {
   const navigation = useNavigation();
@@ -29,36 +31,11 @@ export default function SearchField({ onFocus = () => {}, error }) {
     setText("");
     setArtistData([]);
     setShowFilters(true);
+    setSearchFilter("artist");
   }, [selectedItems]);
 
   return (
-    <View>
-      <View>
-        <CustomSlider data={selectedItems} />
-      </View>
-      {selectedItems.length > 0 ? (
-        <Pressable
-          style={[
-            styles.button,
-            {
-              backgroundColor: CustomColors.dark.primaryColor,
-              margin: 5,
-            },
-          ]}
-          onPress={() =>
-            callGetRecommendations(selectedItems, navigation, {
-              setText,
-              setArtistData,
-              setSearchFilter,
-              setShowFilters,
-              setSelectedItems,
-            })
-          }
-        >
-          <Text style={styles.text}>Find Recommendations</Text>
-        </Pressable>
-      ) : null}
-
+    <ScrollView>
       <View style={styles.input}>
         <View
           style={[
@@ -99,7 +76,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
                     }
                   );
                   let responseJson = await spotifyResponse.json();
-                  console.log(responseJson);
+                  //console.log(responseJson);
                   setShowFilters(false);
                   if (searchFilter == "artist") {
                     setArtistData(responseJson.artists.items);
@@ -186,7 +163,39 @@ export default function SearchField({ onFocus = () => {}, error }) {
       {artistData
         ? renderSearchResults(artistData, selectedItems, setSelectedItems)
         : null}
-    </View>
+      {searchFilter === "genre" ? (
+        <GenreListings
+          genreQuery={text}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+        />
+      ) : null}
+      <ScrollView>
+        <CustomSlider data={selectedItems} />
+      </ScrollView>
+      {selectedItems.length > 0 ? (
+        <Pressable
+          style={[
+            styles.button,
+            {
+              backgroundColor: CustomColors.dark.primaryColor,
+              margin: 5,
+            },
+          ]}
+          onPress={() =>
+            callGetRecommendations(selectedItems, navigation, {
+              setText,
+              setArtistData,
+              setSearchFilter,
+              setShowFilters,
+              setSelectedItems,
+            })
+          }
+        >
+          <Text style={styles.text}>Find Recommendations</Text>
+        </Pressable>
+      ) : null}
+    </ScrollView>
   );
 }
 
@@ -208,32 +217,38 @@ const callGetRecommendations = async (
   let spotifyUrl = "https://api.spotify.com/v1/recommendations?&limit=10&";
   let encodedArtistIds = "";
   let encodedTrackIds = "";
-  // console.log("look!", selectedItems);
+  let encodedGenres = "";
+
   selectedItems.forEach((item) => {
     if (item.type === "artist") {
       encodedArtistIds += item.id + ",";
     } else if (item.type === "track") {
       encodedTrackIds += item.id + ",";
+    } else {
+      encodedGenres += item + ",";
     }
   });
 
   encodedArtistIds = encodedArtistIds.slice(0, -1);
   encodedTrackIds = encodedTrackIds.slice(0, -1);
+  encodedGenres = encodedGenres.slice(0, -1);
 
-  if (encodedArtistIds && encodedTrackIds) {
-    spotifyUrl +=
-      "seed_artists=" +
-      encodeURIComponent(encodedArtistIds) +
-      "&seed_tracks=" +
-      encodeURIComponent(encodedTrackIds);
-  } else if (encodedArtistIds) {
-    spotifyUrl += "seed_artists=" + encodeURIComponent(encodedArtistIds);
-  } else if (encodedTrackIds) {
-    spotifyUrl += "seed_tracks=" + encodeURIComponent(encodedTrackIds);
+  const decodedArray = [];
+
+  if (encodedArtistIds) {
+    decodedArray.push("seed_artists=" + encodeURIComponent(encodedArtistIds));
+  }
+  if (encodedTrackIds) {
+    decodedArray.push("seed_tracks=" + encodeURIComponent(encodedTrackIds));
+  }
+  if (encodedGenres) {
+    decodedArray.push("seed_genres=" + encodeURIComponent(encodedGenres));
   }
 
+  const encodedString = decodedArray.join("&");
+
   try {
-    let spotifyResponse = await fetch(spotifyUrl, {
+    let spotifyResponse = await fetch(spotifyUrl + encodedString, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -245,8 +260,6 @@ const callGetRecommendations = async (
     navigation.navigate("Recommendations", {
       recommendedTracks: responseJson.tracks,
     });
-
-    console.log("hi!");
   } catch (err) {
     console.log(err);
   }

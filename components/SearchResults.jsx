@@ -20,15 +20,12 @@ export default function SearchResult({
   return (
     <View style={{ marginTop: 10 }}>
       <FlatList
-        // data={Object.values(artistData)[0]}
         data={artistData}
         renderItem={({ item }) => {
           return (
             <View
               style={styles.listContainer}
               onStartShouldSetResponder={() => {
-                console.log(item.name, "Clicked");
-                console.log(selectedItems);
                 let newList = selectedItems.slice();
                 if (!newList.includes(item) && newList.length < 5) {
                   newList.push(item);
@@ -70,12 +67,10 @@ const renderSongInfo = (songInfo) => {
   let artistString = "";
   if (artists.length === 1) {
     artistString += artists[0].name;
-    console.log(artistString);
   } else {
     artists.forEach((artist) => {
       artistString += artist.name + ", ";
     });
-    console.log(artistString);
     artistString = artistString.slice(0, -2);
   }
   return (
