@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import {
-  Pressable,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { Pressable, StyleSheet, TextInput, ScrollView } from "react-native";
 import { Text, View } from "./Themed";
 import CustomColors from "../constants/Colors";
 import SearchResults from "./SearchResults";
 import CustomSlider from "./CustomSlider";
 import { useNavigation } from "@react-navigation/native";
-import GenreListings from "./GenreListings";
+import { arrayOfGenres } from "../constants/genres";
 
 const token =
-  "BQBoC7YhmrUI9fawqikFafcuREIQPMCNLkjehobdB0lb1LqSpiFNii22l6ln7jh3ncAwJI9XwUKzh2rWE1RzymA1y3oV4YYbvqcLq3QY20fbhlRJxymk7BdgThftwlGpQmyv8kJRfFNo3Q";
+  "BQA9PYW58d5aF-ImgslpSLhVd2KhZurf6HLp0IiGJF_ZgFRgcYvWdnRLhI6V4NSSaJ2lDBa08oDfXPe8CPCuMxwichVtKmZsyuv08OM_l6rd-1yxjKvh_khgPjI_YZUCnMzb6sb-uuJiiA";
 
 export default function SearchField({ onFocus = () => {}, error }) {
   const navigation = useNavigation();
@@ -23,15 +17,11 @@ export default function SearchField({ onFocus = () => {}, error }) {
   const [isFocused, setIsFocused] = useState(false);
   const [artistData, setArtistData] = useState([]);
   const [text, setText] = useState("");
-  const [searchFilter, setSearchFilter] = useState("artist");
-  const [showFilters, setShowFilters] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
     setText("");
     setArtistData([]);
-    setShowFilters(true);
-    setSearchFilter("artist");
   }, [selectedItems]);
 
   return (
@@ -56,18 +46,14 @@ export default function SearchField({ onFocus = () => {}, error }) {
           <TextInput
             autoCorrect={false}
             onChangeText={async (newText) => {
-              if (!newText) {
+              if (newText === "") {
                 setArtistData([]);
-                setShowFilters(true);
                 setText("");
               } else {
                 setText(newText);
-                console.log(
-                  `https://api.spotify.com/v1/search?q=${newText}&type=${searchFilter}`
-                );
                 try {
                   let spotifyResponse = await fetch(
-                    `https://api.spotify.com/v1/search?q=${newText}&type=${searchFilter}`,
+                    `https://api.spotify.com/v1/search?q=${newText}&type=track,artist`,
                     {
                       headers: {
                         "Content-Type": "application/json",
@@ -76,13 +62,24 @@ export default function SearchField({ onFocus = () => {}, error }) {
                     }
                   );
                   let responseJson = await spotifyResponse.json();
-                  //console.log(responseJson);
+                  let sortedArray =
+                    responseJson.tracks.items.concat(arrayOfGenres);
+
+                  sortedArray = sortedArray.concat(responseJson.artists.items);
+
+                  const newArray = sortedArray.filter((result) => {
+                    const compareName = newText.toLowerCase();
+                    if (result.displayName) {
+                      return result.displayName
+                        .toLowerCase()
+                        .startsWith(compareName);
+                    } else {
+                      return result.name.toLowerCase().startsWith(compareName);
+                    }
+                  });
+
+                  setArtistData(newArray);
                   setShowFilters(false);
-                  if (searchFilter == "artist") {
-                    setArtistData(responseJson.artists.items);
-                  } else {
-                    setArtistData(responseJson.tracks.items);
-                  }
                 } catch (err) {
                   error = err;
                 }
@@ -96,80 +93,15 @@ export default function SearchField({ onFocus = () => {}, error }) {
               setIsFocused(false);
             }}
             style={styles.fieldDescription}
-            placeholder={
-              searchFilter == "artist"
-                ? "Artist's name..."
-                : searchFilter == "track"
-                ? "Song's name"
-                : "Select genre(s)"
-            }
+            placeholder={"Search..."}
             placeholderTextColor={CustomColors.dark.placeholderColor}
             value={text}
           />
         </View>
       </View>
-      {showFilters ? (
-        <View style={styles.buttonRow}>
-          <Pressable
-            style={[
-              styles.button,
-              {
-                backgroundColor:
-                  searchFilter === "artist"
-                    ? CustomColors.dark.primaryColor
-                    : CustomColors.dark.formBackground,
-              },
-            ]}
-            onPress={() => {
-              setSearchFilter("artist");
-            }}
-          >
-            <Text style={styles.text}>Artists</Text>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.button,
-              {
-                backgroundColor:
-                  searchFilter === "track"
-                    ? CustomColors.dark.primaryColor
-                    : CustomColors.dark.formBackground,
-              },
-            ]}
-            onPress={() => {
-              setSearchFilter("track");
-            }}
-          >
-            <Text style={styles.text}>Songs</Text>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.button,
-              {
-                backgroundColor:
-                  searchFilter === "genre"
-                    ? CustomColors.dark.primaryColor
-                    : CustomColors.dark.formBackground,
-              },
-            ]}
-            onPress={() => {
-              setSearchFilter("genre");
-            }}
-          >
-            <Text style={styles.text}>Genres</Text>
-          </Pressable>
-        </View>
-      ) : null}
       {artistData
         ? renderSearchResults(artistData, selectedItems, setSelectedItems)
         : null}
-      {searchFilter === "genre" ? (
-        <GenreListings
-          genreQuery={text}
-          selectedItems={selectedItems}
-          setSelectedItems={setSelectedItems}
-        />
-      ) : null}
       <ScrollView>
         <CustomSlider data={selectedItems} />
       </ScrollView>
@@ -186,8 +118,6 @@ export default function SearchField({ onFocus = () => {}, error }) {
             callGetRecommendations(selectedItems, navigation, {
               setText,
               setArtistData,
-              setSearchFilter,
-              setShowFilters,
               setSelectedItems,
             })
           }
@@ -225,7 +155,7 @@ const callGetRecommendations = async (
     } else if (item.type === "track") {
       encodedTrackIds += item.id + ",";
     } else {
-      encodedGenres += item + ",";
+      encodedGenres += item.spotifyName + ",";
     }
   });
 
@@ -259,6 +189,7 @@ const callGetRecommendations = async (
     clearState(stateSetters);
     navigation.navigate("Recommendations", {
       recommendedTracks: responseJson.tracks,
+      currentIndex: 0,
     });
   } catch (err) {
     console.log(err);
@@ -268,8 +199,6 @@ const callGetRecommendations = async (
 const clearState = (stateSetters) => {
   stateSetters.setText("");
   stateSetters.setArtistData([]);
-  stateSetters.setSearchFilter("artist");
-  stateSetters.setShowFilters(true);
   stateSetters.setSelectedItems([]);
 };
 

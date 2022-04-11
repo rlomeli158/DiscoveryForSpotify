@@ -1,18 +1,13 @@
-import {
-  Image,
-  StyleSheet,
-  TouchableHighlight,
-  TouchableOpacity,
-} from "react-native";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import CustomColors from "../constants/Colors";
-import { View, Text } from "./Themed";
+import { Text } from "./Themed";
 
-const SingleGenre = ({ genreName, selectedItems, setSelectedItems }) => {
+const SingleGenre = ({ genreInfo, selectedItems, setSelectedItems }) => {
+  console.log(JSON.stringify(genreInfo) + ",");
   return (
-    // <View style={styles.genreView}>
     <TouchableOpacity
       onPress={() => {
-        addGenre(genreName, selectedItems, setSelectedItems);
+        addGenre(genreInfo, selectedItems, setSelectedItems);
       }}
       style={styles.genreView}
     >
@@ -22,16 +17,15 @@ const SingleGenre = ({ genreName, selectedItems, setSelectedItems }) => {
           uri: "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTU0fHxtdXNpY3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
         }}
       />
-      <Text style={styles.genreName}>{genreName}</Text>
+      <Text style={styles.genreName}>{genreInfo.displayName}</Text>
     </TouchableOpacity>
-    // </View>
   );
 };
 
-const addGenre = (genreName, selectedItems, setSelectedItems) => {
+const addGenre = (genreInfo, selectedItems, setSelectedItems) => {
   let newList = selectedItems.slice();
-  if (!newList.includes(genreName) && newList.length < 5) {
-    newList.push(genreName);
+  if (!newList.includes(genreInfo) && newList.length < 5) {
+    newList.push(genreInfo);
     setSelectedItems(newList);
   }
 };

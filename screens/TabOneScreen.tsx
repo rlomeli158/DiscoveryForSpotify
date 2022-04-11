@@ -6,22 +6,14 @@ import { Text, View } from "../components/Themed";
 import CustomColors from "../constants/Colors";
 import { RootTabScreenProps } from "../types";
 
-export default function TabOneScreen({
-  navigation,
-}: RootTabScreenProps<"TabOne">) {
+export default function Discover({ navigation }: RootTabScreenProps<"TabOne">) {
   return (
     <ScrollView style={styles.container}>
       <View>
-        {/* <Text style={styles.title}>Let's find some new music</Text>
-        <Text style={styles.subtitle}>
-          Select up to 5 artists, songs, and genres
-        </Text> */}
         <Text style={styles.pageHeader}>Discover</Text>
       </View>
       <View>
         <SearchField error="" />
-        {/* <SearchField title="Song" placeholder="Song's name..." error="" />
-        <SearchField title="Genre" placeholder="Genre's name..." error="" /> */}
       </View>
     </ScrollView>
   );
@@ -30,7 +22,7 @@ export default function TabOneScreen({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: CustomColors.dark.background,
-    paddingTop: 50,
+    paddingTop: 75,
     paddingHorizontal: 20,
   },
   title: {

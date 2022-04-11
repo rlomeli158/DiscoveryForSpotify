@@ -5,20 +5,24 @@ const { width: screenWidth } = Dimensions.get("window");
 const styles = StyleSheet.create({
   carouselContainer: {
     paddingTop: 15,
+    // flex: 1,
+    // top: screenHeight / 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   carouselTitle: {
     fontSize: 20,
   },
   carouselItem: {
+    // flex: 1,
     width: "100%",
     height: screenWidth - 20, //height will be 20 units less than screen width.
   },
   carouselImageContainer: {
-    // flex: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     backgroundColor: "lightblue",
     marginBottom: Platform.select({ ios: 0, android: 1 }), //handle rendering bug.
-    height: "90%",
+    height: "85%",
     width: "100%",
   },
   carouselImage: {
@@ -27,7 +31,7 @@ const styles = StyleSheet.create({
   },
   dotContainer: {
     backgroundColor: CustomColors.dark.background,
-    paddingTop: 0,
+    paddingTop: 5,
     paddingBottom: 10,
   },
   dotStyle: {
@@ -41,7 +45,6 @@ const styles = StyleSheet.create({
   },
   songInfoContainer: {
     justifyContent: "center",
-    flex: 1,
   },
   artistName: {
     paddingTop: 10,
@@ -54,6 +57,9 @@ const styles = StyleSheet.create({
   songName: {
     paddingTop: 10,
     fontSize: 15,
+  },
+  playerContainer: {
+    alignItems: "center",
   },
 });
 export default styles;
