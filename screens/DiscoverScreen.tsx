@@ -1,12 +1,13 @@
 import { ScrollView, StyleSheet } from "react-native";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import SearchField from "../components/SearchField";
 import { Text, View } from "../components/Themed";
 import CustomColors from "../constants/Colors";
 import { RootTabScreenProps } from "../types";
 
-export default function Discover({ navigation }: RootTabScreenProps<"TabOne">) {
+export default function Discover({
+  navigation,
+}: RootTabScreenProps<"Discover">) {
   return (
     <ScrollView style={styles.container}>
       <View>

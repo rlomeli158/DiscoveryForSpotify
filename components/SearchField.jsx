@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { arrayOfGenres } from "../constants/genres";
 
 const token =
-  "BQA9PYW58d5aF-ImgslpSLhVd2KhZurf6HLp0IiGJF_ZgFRgcYvWdnRLhI6V4NSSaJ2lDBa08oDfXPe8CPCuMxwichVtKmZsyuv08OM_l6rd-1yxjKvh_khgPjI_YZUCnMzb6sb-uuJiiA";
+  "BQDTLVeybUwEKRWh_3A5ekdtmyxYH3yaploXleTXjtBOA5tEvgz7wk_DuHAe4PBBeK_RNdQ7u9c1MJFpOKSnwqgzq4iQciNDtFZyW_FO223gJTYBqHO-zERRs46Wi6-o0uJF6XDfZLyRXA";
 
 export default function SearchField({ onFocus = () => {}, error }) {
   const navigation = useNavigation();
@@ -79,9 +79,8 @@ export default function SearchField({ onFocus = () => {}, error }) {
                   });
 
                   setArtistData(newArray);
-                  setShowFilters(false);
                 } catch (err) {
-                  error = err;
+                  console.log(err);
                 }
               }
             }}
