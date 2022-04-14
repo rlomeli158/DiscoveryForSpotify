@@ -1,9 +1,8 @@
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
-import CustomColors from "../constants/Colors";
+import { Image, TouchableOpacity } from "react-native";
 import { Text } from "./Themed";
+import styles from "../constants/styles";
 
 const SingleGenre = ({ genreInfo, selectedItems, setSelectedItems }) => {
-  console.log(JSON.stringify(genreInfo) + ",");
   return (
     <TouchableOpacity
       onPress={() => {
@@ -29,25 +28,5 @@ const addGenre = (genreInfo, selectedItems, setSelectedItems) => {
     setSelectedItems(newList);
   }
 };
-
-const styles = StyleSheet.create({
-  genreView: {
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 5,
-  },
-  genreName: {
-    fontSize: 18,
-    position: "absolute",
-    fontWeight: "bold",
-    color: CustomColors.dark.primaryColor,
-    textAlign: "center",
-  },
-  genreImage: {
-    width: 113,
-    height: 113,
-    borderRadius: 10,
-  },
-});
 
 export default SingleGenre;

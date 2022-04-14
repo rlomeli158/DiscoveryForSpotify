@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, TextInput, ScrollView } from "react-native";
-import { Text, View } from "./Themed";
-import CustomColors from "../constants/Colors";
+import { Pressable, TextInput, ScrollView } from "react-native";
+import { Text, View } from "../Themed";
+import CustomColors from "../../constants/Colors";
 import SearchResults from "./SearchResults";
-import CustomSlider from "./CustomSlider";
+import CustomSlider from "../CustomSlider";
 import { useNavigation } from "@react-navigation/native";
-import { arrayOfGenres } from "../constants/genres";
+import { arrayOfGenres } from "../../constants/genres";
+import styles from "../../constants/styles";
 
 const token =
-  "BQDTLVeybUwEKRWh_3A5ekdtmyxYH3yaploXleTXjtBOA5tEvgz7wk_DuHAe4PBBeK_RNdQ7u9c1MJFpOKSnwqgzq4iQciNDtFZyW_FO223gJTYBqHO-zERRs46Wi6-o0uJF6XDfZLyRXA";
+  "BQAepPNxF_lRTfTkoOoGweQ3-JUzKxLzSMESfDnKlCShbNliONaAznZJ5xaVNoIgUl9ecXsZXo5e7eWfCegPnanM7yTGA1-Wwzui-rvKst3Bf8_047jyCGsqtgiISNBr6t46uk0sHb5VUA";
 
 export default function SearchField({ onFocus = () => {}, error }) {
   const navigation = useNavigation();
@@ -26,10 +27,10 @@ export default function SearchField({ onFocus = () => {}, error }) {
 
   return (
     <ScrollView>
-      <View style={styles.input}>
+      <View style={styles.discoverInput}>
         <View
           style={[
-            styles.inputContainer,
+            styles.discoverTextBox,
             {
               borderColor: isFocused
                 ? CustomColors.dark.primaryColor
@@ -41,7 +42,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
             name="saved-search"
             size={30}
             color={CustomColors.dark.primaryColor}
-            style={styles.icon}
+            style={styles.searchIcon}
           />
           <TextInput
             autoCorrect={false}
@@ -91,7 +92,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
             onBlur={() => {
               setIsFocused(false);
             }}
-            style={styles.fieldDescription}
+            style={styles.placeholderStyle}
             placeholder={"Search..."}
             placeholderTextColor={CustomColors.dark.placeholderColor}
             value={text}
@@ -107,7 +108,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
       {selectedItems.length > 0 ? (
         <Pressable
           style={[
-            styles.button,
+            styles.recommendationsButton,
             {
               backgroundColor: CustomColors.dark.primaryColor,
               margin: 5,
@@ -200,56 +201,3 @@ const clearState = (stateSetters) => {
   stateSetters.setArtistData([]);
   stateSetters.setSelectedItems([]);
 };
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-    elevation: 3,
-    backgroundColor: CustomColors.dark.primaryColor,
-    marginHorizontal: 10,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  input: {
-    marginTop: 5,
-    flexDirection: "row",
-    width: "100%",
-  },
-  inputContainer: {
-    height: 40,
-    width: "100%",
-    backgroundColor: CustomColors.dark.formBackground,
-    flexDirection: "row",
-    paddingHorizontal: 5,
-    borderWidth: 0.5,
-    alignItems: "center",
-    borderRadius: 5,
-  },
-  fieldName: {
-    width: "17%",
-    textAlign: "right",
-    fontSize: 24,
-    lineHeight: 22,
-    paddingVertical: 15,
-  },
-  fieldDescription: {
-    fontSize: 20,
-    color: CustomColors.dark.secondaryText,
-    flex: 1,
-  },
-  errorText: {
-    color: CustomColors.dark.error,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});

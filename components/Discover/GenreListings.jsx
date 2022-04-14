@@ -1,7 +1,7 @@
-import { StyleSheet } from "react-native";
 import { genreObj } from "../constants/genres";
 import SingleGenre from "./SingleGenre";
 import { View } from "./Themed";
+import styles from "../constants/styles";
 
 const GenreListings = ({ genreQuery, selectedItems, setSelectedItems }) => {
   return (
@@ -24,12 +24,5 @@ const GenreListings = ({ genreQuery, selectedItems, setSelectedItems }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  genreGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-});
 
 export default GenreListings;

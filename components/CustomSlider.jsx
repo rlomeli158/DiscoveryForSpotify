@@ -3,7 +3,7 @@ import { Dimensions } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import CarouselItem from "./CarouselItem";
 import styles from "../constants/styles";
-import { Text, View } from "./Themed";
+import { View } from "./Themed";
 import CustomPaging from "./CustomPaging";
 
 const { width } = Dimensions.get("window");
