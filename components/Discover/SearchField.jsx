@@ -6,11 +6,11 @@ import CustomColors from "../../constants/Colors";
 import SearchResults from "./SearchResults";
 import CustomSlider from "../CustomSlider";
 import { useNavigation } from "@react-navigation/native";
-import { arrayOfGenres } from "../../constants/genres";
 import styles from "../../constants/styles";
-
-const token =
-  "BQAepPNxF_lRTfTkoOoGweQ3-JUzKxLzSMESfDnKlCShbNliONaAznZJ5xaVNoIgUl9ecXsZXo5e7eWfCegPnanM7yTGA1-Wwzui-rvKst3Bf8_047jyCGsqtgiISNBr6t46uk0sHb5VUA";
+import {
+  callSearchApi,
+  callGetRecommendationsApi,
+} from "../../client/spotifyClient";
 
 export default function SearchField({ onFocus = () => {}, error }) {
   const navigation = useNavigation();
@@ -53,33 +53,8 @@ export default function SearchField({ onFocus = () => {}, error }) {
               } else {
                 setText(newText);
                 try {
-                  let spotifyResponse = await fetch(
-                    `https://api.spotify.com/v1/search?q=${newText}&type=track,artist`,
-                    {
-                      headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                      },
-                    }
-                  );
-                  let responseJson = await spotifyResponse.json();
-                  let sortedArray =
-                    responseJson.tracks.items.concat(arrayOfGenres);
-
-                  sortedArray = sortedArray.concat(responseJson.artists.items);
-
-                  const newArray = sortedArray.filter((result) => {
-                    const compareName = newText.toLowerCase();
-                    if (result.displayName) {
-                      return result.displayName
-                        .toLowerCase()
-                        .startsWith(compareName);
-                    } else {
-                      return result.name.toLowerCase().startsWith(compareName);
-                    }
-                  });
-
-                  setArtistData(newArray);
+                  const results = await callSearchApi(newText);
+                  setArtistData(results);
                 } catch (err) {
                   console.log(err);
                 }
@@ -144,51 +119,14 @@ const callGetRecommendations = async (
   navigation,
   stateSetters
 ) => {
-  let spotifyUrl = "https://api.spotify.com/v1/recommendations?&limit=10&";
-  let encodedArtistIds = "";
-  let encodedTrackIds = "";
-  let encodedGenres = "";
-
-  selectedItems.forEach((item) => {
-    if (item.type === "artist") {
-      encodedArtistIds += item.id + ",";
-    } else if (item.type === "track") {
-      encodedTrackIds += item.id + ",";
-    } else {
-      encodedGenres += item.spotifyName + ",";
-    }
-  });
-
-  encodedArtistIds = encodedArtistIds.slice(0, -1);
-  encodedTrackIds = encodedTrackIds.slice(0, -1);
-  encodedGenres = encodedGenres.slice(0, -1);
-
-  const decodedArray = [];
-
-  if (encodedArtistIds) {
-    decodedArray.push("seed_artists=" + encodeURIComponent(encodedArtistIds));
-  }
-  if (encodedTrackIds) {
-    decodedArray.push("seed_tracks=" + encodeURIComponent(encodedTrackIds));
-  }
-  if (encodedGenres) {
-    decodedArray.push("seed_genres=" + encodeURIComponent(encodedGenres));
-  }
-
-  const encodedString = decodedArray.join("&");
-
   try {
-    let spotifyResponse = await fetch(spotifyUrl + encodedString, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    let responseJson = await spotifyResponse.json();
-
+    const recommendedTracks = await callGetRecommendationsApi(
+      selectedItems,
+      10
+    );
     clearState(stateSetters);
     navigation.navigate("Recommendations", {
-      recommendedTracks: responseJson.tracks,
+      recommendedTracks: recommendedTracks,
       currentIndex: 0,
     });
   } catch (err) {
