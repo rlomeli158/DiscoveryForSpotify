@@ -1,9 +1,6 @@
 import { arrayOfGenres } from "../constants/genres";
 
-const token =
-  "BQC-p_8HOPyv7l_7keN5lYpYnf0r7B6iM7vAJCrtg_hHXBUYcN4GNoq_KPHQ_b1fFsqTQDEiVHEzbFS2oqrzjDOq15FNsof92MRO7clAajZRZUFcmAN9vkVTL_O4tvJ2kir2DbXlhZpkDw";
-
-export const callSearchApi = async (searchQuery) => {
+export const callSearchApi = async (searchQuery, token) => {
   let spotifyResponse = await fetch(
     `https://api.spotify.com/v1/search?q=${searchQuery}&type=track,artist`,
     {
@@ -32,7 +29,11 @@ export const callSearchApi = async (searchQuery) => {
   return newArray;
 };
 
-export const callGetRecommendationsApi = async (selectedItems, limit) => {
+export const callGetRecommendationsApi = async (
+  selectedItems,
+  limit,
+  token
+) => {
   let spotifyUrl = `https://api.spotify.com/v1/recommendations?&limit=${limit}&`;
   let encodedArtistIds = "";
   let encodedTrackIds = "";

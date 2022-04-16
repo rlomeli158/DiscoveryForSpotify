@@ -11,8 +11,10 @@ import {
   callSearchApi,
   callGetRecommendationsApi,
 } from "../../client/spotifyClient";
+import { useSelector } from "react-redux";
 
 export default function SearchField({ onFocus = () => {}, error }) {
+  const token = useSelector((state) => state.token.value);
   const navigation = useNavigation();
 
   const [isFocused, setIsFocused] = useState(false);
@@ -53,7 +55,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
               } else {
                 setText(newText);
                 try {
-                  const results = await callSearchApi(newText);
+                  const results = await callSearchApi(newText, token);
                   setArtistData(results);
                 } catch (err) {
                   console.log(err);
@@ -90,7 +92,7 @@ export default function SearchField({ onFocus = () => {}, error }) {
             },
           ]}
           onPress={() =>
-            callGetRecommendations(selectedItems, navigation, {
+            callGetRecommendations(selectedItems, navigation, token, {
               setText,
               setArtistData,
               setSelectedItems,
@@ -117,12 +119,14 @@ const renderSearchResults = (artistData, selectedItems, setSelectedItems) => {
 const callGetRecommendations = async (
   selectedItems,
   navigation,
+  token,
   stateSetters
 ) => {
   try {
     const recommendedTracks = await callGetRecommendationsApi(
       selectedItems,
-      10
+      10,
+      token
     );
     clearState(stateSetters);
     navigation.navigate("Recommendations", {
