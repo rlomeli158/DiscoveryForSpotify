@@ -116,7 +116,6 @@ export const callRecentlyPlayed = async (token) => {
     let responseJson = await spotifyResponse.json();
 
     let recommendedTracks = responseJson.items;
-    console.log(recommendedTracks);
     return recommendedTracks;
   } catch (err) {
     console.log(err);

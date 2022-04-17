@@ -15,7 +15,6 @@ const Gallery = ({ title, data }) => {
         data={data}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => {
-          console.log(item);
           return (
             <View style={styles.galleryView}>
               <Image
@@ -52,7 +51,7 @@ const Gallery = ({ title, data }) => {
             </View>
           );
         }}
-        keyExtractor={(item) => item.name}
+        keyExtractor={(item) => (item.track ? item.track.name : item.name)}
       />
     </View>
   );
