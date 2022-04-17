@@ -54,11 +54,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     marginHorizontal: 5,
-    height: screenWidth / 1.5,
   },
   galleryView: {
-    height: "100%",
-    width: "80%",
     margin: 10,
     flex: 1,
   },
@@ -66,9 +63,10 @@ const styles = StyleSheet.create({
     height: screenWidth / 2.2,
     width: screenWidth / 2.2,
     resizeMode: "contain",
+    borderRadius: 15,
   },
   galleryText: {
-    height: screenWidth / 2.2,
+    flex: 1,
     width: screenWidth / 2.2,
   },
   //Carousel Pagination
