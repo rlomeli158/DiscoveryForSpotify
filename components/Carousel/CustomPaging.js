@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Pagination } from "react-native-snap-carousel";
-import styles from "../constants/styles";
+import styles from "../../constants/styles";
 
 export default function CustomPaging({ data, activeSlide }) {
   const settings = {

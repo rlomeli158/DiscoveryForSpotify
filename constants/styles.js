@@ -4,7 +4,7 @@ import CustomColors from "./Colors";
 const { width: screenWidth } = Dimensions.get("window");
 const styles = StyleSheet.create({
   //General page styles
-  discoverPageContainer: {
+  pageContainer: {
     backgroundColor: CustomColors.dark.background,
     paddingTop: 75,
     paddingHorizontal: 20,
@@ -16,6 +16,13 @@ const styles = StyleSheet.create({
   },
   pageHeader: {
     fontSize: 25,
+    fontWeight: "600",
+    textAlign: "left",
+    marginBottom: 5,
+  },
+  pageSubHeader: {
+    fontSize: 20,
+    fontWeight: "600",
     textAlign: "left",
     marginBottom: 5,
   },
@@ -42,6 +49,27 @@ const styles = StyleSheet.create({
   carouselImage: {
     ...StyleSheet.absoluteFillObject,
     resizeMode: "contain",
+  },
+  galleryList: {
+    flex: 1,
+    width: "100%",
+    marginHorizontal: 5,
+    height: screenWidth / 1.5,
+  },
+  galleryView: {
+    height: "100%",
+    width: "80%",
+    margin: 10,
+    flex: 1,
+  },
+  galleryImage: {
+    height: screenWidth / 2.2,
+    width: screenWidth / 2.2,
+    resizeMode: "contain",
+  },
+  galleryText: {
+    height: screenWidth / 2.2,
+    width: screenWidth / 2.2,
   },
   //Carousel Pagination
   dotContainer: {

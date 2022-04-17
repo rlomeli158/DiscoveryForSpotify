@@ -4,7 +4,7 @@ import { Pressable, TextInput, ScrollView } from "react-native";
 import { Text, View } from "../Themed";
 import CustomColors from "../../constants/Colors";
 import SearchResults from "./SearchResults";
-import CustomSlider from "../CustomSlider";
+import CustomSlider from "../Carousel/Recommendation/CustomCarousel";
 import { useNavigation } from "@react-navigation/native";
 import styles from "../../constants/styles";
 import {

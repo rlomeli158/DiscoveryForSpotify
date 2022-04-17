@@ -82,3 +82,43 @@ export const callGetRecommendationsApi = async (
     return [];
   }
 };
+
+export const callGetUsersTop = async (type, token) => {
+  const spotifyUrl = "https://api.spotify.com/v1/me/top/";
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl + type, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let responseJson = await spotifyResponse.json();
+    let recommendedTracks = responseJson.items;
+    return recommendedTracks;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callRecentlyPlayed = async (token) => {
+  let spotifyUrl = "https://api.spotify.com/v1/me/player/recently-played";
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let responseJson = await spotifyResponse.json();
+
+    let recommendedTracks = responseJson.items;
+    console.log(recommendedTracks);
+    return recommendedTracks;
+  } catch (err) {
+    console.log(err);
+  }
+};
