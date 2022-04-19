@@ -121,3 +121,43 @@ export const callRecentlyPlayed = async (token) => {
     console.log(err);
   }
 };
+
+export const callGetPlaylists = async (token) => {
+  let spotifyUrl = "https://api.spotify.com/v1/me/playlists";
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let responseJson = await spotifyResponse.json();
+
+    let playlists = responseJson.items;
+    console.log("From API:", playlists);
+    return playlists;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetPlaylistInfo = async (itemId, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/playlists/${itemId}`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let playlistInfo = await spotifyResponse.json();
+
+    return playlistInfo;
+  } catch (err) {
+    console.log(err);
+  }
+};

@@ -20,6 +20,84 @@ const getBetter = () => {
   });
 };
 
+export const dummyData = [
+  {
+    album: {
+      images: [
+        {
+          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
+        },
+      ],
+    },
+    artists: [
+      {
+        name: "Steve Lomeli",
+      },
+    ],
+    name: "This Is A Crazy Long Name",
+  },
+  {
+    album: {
+      images: [
+        {
+          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
+        },
+      ],
+    },
+    artists: [
+      {
+        name: "Steve Lomeli",
+      },
+    ],
+    name: "Best Song Ever",
+  },
+  {
+    album: {
+      images: [
+        {
+          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
+        },
+      ],
+    },
+    artists: [
+      {
+        name: "Steve Lomeli",
+      },
+    ],
+    name: "Best Song Ever Pt. 2",
+  },
+  {
+    album: {
+      images: [
+        {
+          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
+        },
+      ],
+    },
+    artists: [
+      {
+        name: "Steve Lomeli",
+      },
+    ],
+    name: "Best Song Ever Pt. 4",
+  },
+  {
+    album: {
+      images: [
+        {
+          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
+        },
+      ],
+    },
+    artists: [
+      {
+        name: "Steve Lomeli",
+      },
+    ],
+    name: "Best Song Ever Pt. 3",
+  },
+];
+
 export const arrayOfGenres = [
   { displayName: "Acoustic", spotifyName: "acoustic" },
   { displayName: "Afrobeat", spotifyName: "afrobeat" },

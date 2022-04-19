@@ -1,9 +1,14 @@
 import { Button, ScrollView } from "react-native";
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
-import Gallery from "../components/Gallery/Gallery";
+import Gallery, { defaultImage } from "../components/Gallery/Gallery";
 import { useEffect, useState } from "react";
-import { callGetUsersTop, callRecentlyPlayed } from "../client/spotifyClient";
+import {
+  callGetPlaylistInfo,
+  callGetPlaylists,
+  callGetUsersTop,
+  callRecentlyPlayed,
+} from "../client/spotifyClient";
 import { useSelector, useDispatch } from "react-redux";
 import * as WebBrowser from "expo-web-browser";
 import {
@@ -15,83 +20,6 @@ WebBrowser.maybeCompleteAuthSession();
 import { setToken } from "../redux/features/token";
 
 const name = "Steve";
-const data = [
-  {
-    album: {
-      images: [
-        {
-          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
-        },
-      ],
-    },
-    artists: [
-      {
-        name: "Steve Lomeli",
-      },
-    ],
-    name: "This Is A Crazy Long Name",
-  },
-  {
-    album: {
-      images: [
-        {
-          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
-        },
-      ],
-    },
-    artists: [
-      {
-        name: "Steve Lomeli",
-      },
-    ],
-    name: "Best Song Ever",
-  },
-  {
-    album: {
-      images: [
-        {
-          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
-        },
-      ],
-    },
-    artists: [
-      {
-        name: "Steve Lomeli",
-      },
-    ],
-    name: "Best Song Ever Pt. 2",
-  },
-  {
-    album: {
-      images: [
-        {
-          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
-        },
-      ],
-    },
-    artists: [
-      {
-        name: "Steve Lomeli",
-      },
-    ],
-    name: "Best Song Ever Pt. 4",
-  },
-  {
-    album: {
-      images: [
-        {
-          url: "https://upload.wikimedia.org/wikipedia/en/b/b2/Olivia_Rodrigo_-_SOUR.png",
-        },
-      ],
-    },
-    artists: [
-      {
-        name: "Steve Lomeli",
-      },
-    ],
-    name: "Best Song Ever Pt. 3",
-  },
-];
 
 // Endpoint
 const discovery = {
@@ -106,6 +34,8 @@ const HomeScreen = ({ route, navigation }) => {
   const [topArtists, setTopArtists] = useState();
   const [topTracks, setTopTracks] = useState();
   const [recentlyPlayed, setRecentlyPlayed] = useState();
+  const [playlists, setPlaylists] = useState(false);
+  const [playlistImages, setPlaylistImages] = useState();
   const [tokenReceived, setTokenReceived] = useState(false);
 
   const [request, response, promptAsync] = useAuthRequest(
@@ -115,6 +45,9 @@ const HomeScreen = ({ route, navigation }) => {
       scopes: [
         "user-read-email",
         "playlist-modify-public",
+        "playlist-read-private",
+        "playlist-modify-private",
+        "playlist-read-collaborative",
         "user-read-recently-played",
         "user-top-read",
       ],
@@ -148,7 +81,28 @@ const HomeScreen = ({ route, navigation }) => {
     setTopArtists(await callGetUsersTop("artists", token));
     setTopTracks(await callGetUsersTop("tracks", token));
     setRecentlyPlayed(await callRecentlyPlayed(token));
+    setPlaylists(await callGetPlaylists(token));
   }, [tokenReceived]);
+
+  useEffect(async () => {
+    if (playlists) {
+      let imageHash = {};
+      // console.log("PLAYLISTS:", playlists);
+      playlists.forEach(async (playlist) => {
+        const playlistInfo = await callGetPlaylistInfo(playlist.id, token);
+        let imageUrl = defaultImage;
+        if (playlistInfo.images.length > 0) {
+          imageUrl = playlistInfo.images[0].url;
+        }
+        // console.log(playlist.id, imageUrl);
+        imageHash[playlist.id] = imageUrl;
+        // console.log("in progress:", imageHash);
+      });
+      // console.log("Image hash:", imageHash);
+      setPlaylistImages(imageHash);
+      // console.log(playlistImages);
+    }
+  }, [playlists]);
 
   return (
     <ScrollView
@@ -161,10 +115,21 @@ const HomeScreen = ({ route, navigation }) => {
       <View>
         <Gallery title="Your Top Artists" data={topArtists} />
         <Gallery title="Your Top Songs" data={topTracks} />
-        <Gallery title="Your Recently Played" data={recentlyPlayed} />
+        <Gallery
+          title="Your Playlists"
+          data={playlists}
+          playlistImages={playlistImages}
+        />
       </View>
     </ScrollView>
   );
 };
 
 export default HomeScreen;
+/*
+
+         <Gallery title="Your Recently Played" data={recentlyPlayed} /> 
+
+         <Gallery title="Your Playlists" data={playlists} dummy={true} /> 
+
+*/

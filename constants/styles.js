@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     resizeMode: "contain",
   },
+  // Gallery
   galleryList: {
     flex: 1,
     width: "100%",
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   galleryImage: {
     height: screenWidth / 2.2,
     width: screenWidth / 2.2,
-    resizeMode: "contain",
+    // resizeMode: "contain",
     borderRadius: 15,
   },
   galleryText: {
