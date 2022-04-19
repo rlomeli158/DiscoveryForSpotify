@@ -5,12 +5,7 @@ import styles from "../../constants/styles";
 export const defaultImage =
   "https://images.unsplash.com/photo-1565656898731-61d5df85f9a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTV8fG11c2ljfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60";
 
-const Gallery = ({ title, data, playlistImages }) => {
-  // let playlistImages;
-  // if (dummy !== undefined) {
-  //   console.log("hello there", title, data);
-  //   playlistImages = await playlistProcess(data);
-  // }
+const Gallery = ({ title, data }) => {
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.pageSubHeader}>{title}</Text>
@@ -19,8 +14,9 @@ const Gallery = ({ title, data, playlistImages }) => {
         style={styles.galleryList}
         data={data}
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => {
-          const imageUrl = getImageUrl(item, playlistImages);
+        renderItem={({ item, index }) => {
+          const itemIndex = index;
+          const imageUrl = getImageUrl(item);
 
           const songInfoArray = getSongInfo(item);
 
@@ -53,7 +49,9 @@ const Gallery = ({ title, data, playlistImages }) => {
             </Pressable>
           );
         }}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => {
+          return index;
+        }}
       />
     </View>
   );
@@ -79,7 +77,7 @@ const renderSongInfo = (songName, artists, artistName, playlistName) => {
   );
 };
 
-const getImageUrl = (item, playlistImages) => {
+const getImageUrl = (item) => {
   let imageUrl = "";
 
   if (item.played_at) {
@@ -92,8 +90,6 @@ const getImageUrl = (item, playlistImages) => {
     } else {
       imageUrl = defaultImage;
     }
-    // console.log(playlistImages);
-    // imageUrl = playlistImages[item.id];
   } else if (item.album) {
     if (item.album.images[0].url) {
       imageUrl = item.album.images[0].url;

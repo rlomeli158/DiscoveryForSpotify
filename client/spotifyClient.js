@@ -136,7 +136,6 @@ export const callGetPlaylists = async (token) => {
     let responseJson = await spotifyResponse.json();
 
     let playlists = responseJson.items;
-    console.log("From API:", playlists);
     return playlists;
   } catch (err) {
     console.log(err);

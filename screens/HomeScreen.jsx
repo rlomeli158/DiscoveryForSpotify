@@ -35,7 +35,6 @@ const HomeScreen = ({ route, navigation }) => {
   const [topTracks, setTopTracks] = useState();
   const [recentlyPlayed, setRecentlyPlayed] = useState();
   const [playlists, setPlaylists] = useState(false);
-  const [playlistImages, setPlaylistImages] = useState();
   const [tokenReceived, setTokenReceived] = useState(false);
 
   const [request, response, promptAsync] = useAuthRequest(
@@ -84,26 +83,6 @@ const HomeScreen = ({ route, navigation }) => {
     setPlaylists(await callGetPlaylists(token));
   }, [tokenReceived]);
 
-  useEffect(async () => {
-    if (playlists) {
-      let imageHash = {};
-      // console.log("PLAYLISTS:", playlists);
-      playlists.forEach(async (playlist) => {
-        const playlistInfo = await callGetPlaylistInfo(playlist.id, token);
-        let imageUrl = defaultImage;
-        if (playlistInfo.images.length > 0) {
-          imageUrl = playlistInfo.images[0].url;
-        }
-        // console.log(playlist.id, imageUrl);
-        imageHash[playlist.id] = imageUrl;
-        // console.log("in progress:", imageHash);
-      });
-      // console.log("Image hash:", imageHash);
-      setPlaylistImages(imageHash);
-      // console.log(playlistImages);
-    }
-  }, [playlists]);
-
   return (
     <ScrollView
       style={[styles.pageContainer]}
@@ -115,11 +94,8 @@ const HomeScreen = ({ route, navigation }) => {
       <View>
         <Gallery title="Your Top Artists" data={topArtists} />
         <Gallery title="Your Top Songs" data={topTracks} />
-        <Gallery
-          title="Your Playlists"
-          data={playlists}
-          playlistImages={playlistImages}
-        />
+        <Gallery title="Your Playlists" data={playlists} />
+        <Gallery title="Your Recently Played" data={recentlyPlayed} />
       </View>
     </ScrollView>
   );
