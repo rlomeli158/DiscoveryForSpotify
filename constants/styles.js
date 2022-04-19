@@ -70,6 +70,29 @@ const styles = StyleSheet.create({
     flex: 1,
     width: screenWidth / 2.2,
   },
+  // Vertical List
+  songContainer: {
+    borderRadius: 20,
+    backgroundColor: "#696969",
+    padding: 10,
+    margin: 5,
+    width: "98%",
+    height: screenWidth / 4,
+    flexDirection: "row",
+  },
+  listImage: {
+    justifyContent: "center",
+    width: screenWidth / 5,
+    height: screenWidth / 5,
+    borderRadius: 15,
+  },
+  listText: {
+    flex: 1,
+    width: screenWidth / 2.2,
+    backgroundColor: "#696969",
+    justifyContent: "center",
+    marginLeft: 10,
+  },
   //Carousel Pagination
   dotContainer: {
     backgroundColor: CustomColors.dark.background,

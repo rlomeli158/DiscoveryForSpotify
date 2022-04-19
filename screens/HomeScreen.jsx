@@ -18,6 +18,7 @@ import {
 } from "expo-auth-session";
 WebBrowser.maybeCompleteAuthSession();
 import { setToken } from "../redux/features/token";
+import VerticalList from "../components/VerticalList/VerticalList";
 
 const name = "Steve";
 
@@ -95,17 +96,11 @@ const HomeScreen = ({ route, navigation }) => {
         <Gallery title="Your Top Artists" data={topArtists} />
         <Gallery title="Your Top Songs" data={topTracks} />
         <Gallery title="Your Playlists" data={playlists} />
-        <Gallery title="Your Recently Played" data={recentlyPlayed} />
+        {/* <Gallery title="Your Recently Played" data={recentlyPlayed} /> */}
+        <VerticalList title="Your Recently Played" data={recentlyPlayed} />
       </View>
     </ScrollView>
   );
 };
 
 export default HomeScreen;
-/*
-
-         <Gallery title="Your Recently Played" data={recentlyPlayed} /> 
-
-         <Gallery title="Your Playlists" data={playlists} dummy={true} /> 
-
-*/

@@ -57,7 +57,7 @@ const Gallery = ({ title, data }) => {
   );
 };
 
-const renderSongInfo = (songName, artists, artistName, playlistName) => {
+export const renderSongInfo = (songName, artists, artistName, playlistName) => {
   if (artistName || playlistName) {
     const nameToRender = artistName ? artistName : playlistName;
     return (
@@ -77,7 +77,7 @@ const renderSongInfo = (songName, artists, artistName, playlistName) => {
   );
 };
 
-const getImageUrl = (item) => {
+export const getImageUrl = (item) => {
   let imageUrl = "";
 
   if (item.played_at) {
@@ -105,7 +105,7 @@ const getImageUrl = (item) => {
   return imageUrl;
 };
 
-const getSongInfo = (item) => {
+export const getSongInfo = (item) => {
   let songName = "";
   let artists = "";
   let artistName = "";
