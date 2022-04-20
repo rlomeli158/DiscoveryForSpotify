@@ -160,3 +160,116 @@ export const callGetPlaylistInfo = async (itemId, token) => {
     console.log(err);
   }
 };
+
+export const callGetInfo = async (type, id, token) => {
+  let spotifyUrl = "";
+  if (type == "artist") {
+    spotifyUrl = `https://api.spotify.com/v1/artists/${id}`;
+  } else if (type == "track") {
+    spotifyUrl = `https://api.spotify.com/v1/tracks/${id}`;
+  }
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let info = await spotifyResponse.json();
+
+    return info;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetArtistTopTracks = async (id, token) => {
+  let market = "";
+  let spotifyUrl = `https://api.spotify.com/v1/artists/${id}/top-tracks`;
+
+  try {
+    let spotifyResponse = await fetch("https://api.spotify.com/v1/me", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let profileInformation = await spotifyResponse.json();
+    market = profileInformation.country;
+  } catch (err) {
+    console.log(err);
+  }
+
+  spotifyUrl = spotifyUrl + `?market=${market}`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let topTracksResponse = await spotifyResponse.json();
+    const topTracks = topTracksResponse.tracks;
+
+    return topTracks;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetArtistAlbums = async (id, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/artists/${id}/albums?include_groups=album&limit=40`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let albumsResponse = await spotifyResponse.json();
+
+    const albums = albumsResponse.items;
+
+    let seenAlbumTitles = [];
+    const filteredAlbums = albums.filter((album) => {
+      if (!seenAlbumTitles.includes(album.name)) {
+        seenAlbumTitles.push(album.name);
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    return filteredAlbums;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetRelatedArtists = async (id, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/artists/${id}/related-artists`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let relatedResponse = await spotifyResponse.json();
+
+    const relatedArtists = relatedResponse.artists;
+
+    return relatedArtists;
+  } catch (err) {
+    console.log(err);
+  }
+};

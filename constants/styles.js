@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
   pageContainer: {
     backgroundColor: CustomColors.dark.background,
     paddingTop: 75,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   pageSeparator: {
     marginVertical: 10,
@@ -92,6 +92,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#696969",
     justifyContent: "center",
     marginLeft: 10,
+  },
+  // Info page
+  infoPageContainer: {
+    backgroundColor: CustomColors.dark.background,
+  },
+  infoPageTextContainer: {
+    paddingHorizontal: 10,
+  },
+  infoImage: {
+    height: screenWidth,
+    width: screenWidth,
+    marginBottom: 10,
+  },
+  artistSubheader: {
+    fontSize: 40,
+    fontWeight: "700",
+    color: CustomColors.dark.primaryColor,
+  },
+  artistFollowers: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: CustomColors.dark.primaryColor,
+    textAlign: "right",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
   },
   //Carousel Pagination
   dotContainer: {

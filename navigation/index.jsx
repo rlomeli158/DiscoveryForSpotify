@@ -18,6 +18,7 @@ import TabTwoScreen from "../screens/TabTwoScreen";
 import LinkingConfiguration from "./LinkingConfiguration";
 import Discover from "../screens/DiscoverScreen";
 import HomeScreen from "../screens/HomeScreen";
+import InfoScreen from "../screens/InfoScreen";
 
 export default function Navigation({ colorScheme }) {
   return (
@@ -49,6 +50,11 @@ function RootNavigator() {
       <Stack.Screen
         name="Recommendations"
         component={Recommendations}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Info"
+        component={InfoScreen}
         options={{ headerShown: false }}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>

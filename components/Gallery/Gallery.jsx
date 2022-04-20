@@ -1,11 +1,13 @@
 import { FlatList, Image, Pressable } from "react-native";
 import { View, Text } from "../Themed";
 import styles from "../../constants/styles";
+import { useNavigation } from "@react-navigation/native";
 
 export const defaultImage =
   "https://images.unsplash.com/photo-1565656898731-61d5df85f9a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTV8fG11c2ljfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60";
 
 const Gallery = ({ title, data }) => {
+  const navigation = useNavigation();
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.pageSubHeader}>{title}</Text>
@@ -30,8 +32,16 @@ const Gallery = ({ title, data }) => {
               onPress={() => {
                 if (songName) {
                   console.log(songName);
+                  navigation.navigate("Info", {
+                    type: item.type,
+                    id: item.id,
+                  });
                 } else {
                   console.log(artistName);
+                  navigation.navigate("Info", {
+                    type: item.type,
+                    id: item.id,
+                  });
                 }
               }}
             >
