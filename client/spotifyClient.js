@@ -273,3 +273,77 @@ export const callGetRelatedArtists = async (id, token) => {
     console.log(err);
   }
 };
+
+export const callGetTrackFeatures = async (id, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/audio-features/${id}`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let trackFeatures = await spotifyResponse.json();
+
+    return trackFeatures;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callSaveTrack = async (id, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/me/tracks?ids=${id}`;
+
+  try {
+    await fetch(spotifyUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return true;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callDeleteTrack = async (id, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/me/tracks?ids=${id}`;
+
+  try {
+    await fetch(spotifyUrl, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return true;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callCheckTrackSaveStatus = async (id, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/me/tracks/contains?ids=${id}`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let statusResult = await spotifyResponse.json();
+
+    return statusResult[0];
+  } catch (err) {
+    console.log(err);
+  }
+};

@@ -1,9 +1,11 @@
-import { FlatList, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { FlatList, Image, Pressable } from "react-native";
 import styles from "../../constants/styles";
 import { getImageUrl, getSongInfo, renderSongInfo } from "../Gallery/Gallery";
 import { Text, View } from "../Themed";
 
 const VerticalList = ({ title, data }) => {
+  const navigation = useNavigation();
   return (
     <View>
       <Text style={styles.pageSubHeader}>{title}</Text>
@@ -19,12 +21,21 @@ const VerticalList = ({ title, data }) => {
           const playlistName = songInfoArray[3];
 
           return (
-            <View style={styles.songContainer}>
-              <Image style={styles.listImage} source={{ uri: imageUrl }} />
-              <View style={styles.listText}>
-                {renderSongInfo(songName, artists, artistName, playlistName)}
+            <Pressable
+              onPress={() => {
+                navigation.push("InfoScreenTrack", {
+                  type: item.track.type,
+                  id: item.track.id,
+                });
+              }}
+            >
+              <View style={styles.songContainer}>
+                <Image style={styles.listImage} source={{ uri: imageUrl }} />
+                <View style={styles.listText}>
+                  {renderSongInfo(songName, artists, artistName, playlistName)}
+                </View>
               </View>
-            </View>
+            </Pressable>
           );
         }}
         keyExtractor={(item, index) => {

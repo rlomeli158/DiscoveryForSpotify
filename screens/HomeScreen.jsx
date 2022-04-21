@@ -50,6 +50,8 @@ const HomeScreen = ({ route, navigation }) => {
         "playlist-read-collaborative",
         "user-read-recently-played",
         "user-top-read",
+        "user-library-read",
+        "user-library-modify",
       ],
       // In order to follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
       // this must be set to false

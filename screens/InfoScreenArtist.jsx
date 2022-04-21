@@ -11,8 +11,8 @@ import Gallery, { getImageUrl } from "../components/Gallery/Gallery";
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 import { FontAwesome } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
+import * as Progress from "react-native-progress";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -43,7 +43,7 @@ const InfoScreenArtist = ({ route, navigation }) => {
   return (
     <ScrollView
       style={styles.infoPageContainer}
-      contentContainerStyle={{ paddingBottom: 100 }}
+      contentContainerStyle={{ paddingBottom: 30 }}
     >
       {loading ? (
         loadingIcon()
@@ -72,25 +72,7 @@ const InfoScreenArtist = ({ route, navigation }) => {
               data={relatedArtists}
             />
             {renderPopularity(activePopularityIcons, inactivePopularityIcons)}
-            <Text style={styles.pageSubHeader}>Genres</Text>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              horizontal={true}
-              style={{ flex: 1, width: "100%" }}
-              data={artist.genres}
-              renderItem={({ item, index }) => {
-                return (
-                  <View style={styles.genreContainer}>
-                    <Text style={styles.genreText}>
-                      {item.charAt(0).toUpperCase() + item.slice(1)}
-                    </Text>
-                  </View>
-                );
-              }}
-              keyExtractor={(item, index) => {
-                return index;
-              }}
-            />
+            {renderGenres(artist.genres)}
           </View>
         </>
       )}
@@ -109,16 +91,30 @@ export const loadingIcon = () => {
         width: screenWidth,
       }}
     >
-      <AntDesign
-        name="loading1"
-        size={100}
+      <Text
+        style={{
+          marginTop: 200,
+          fontSize: 25,
+          marginBottom: 30,
+          fontWeight: "700",
+        }}
+      >
+        Loading
+      </Text>
+      <Progress.CircleSnail
+        hidesWhenStopped={true}
+        size={200}
+        thickness={5}
         color={CustomColors.dark.primaryColor}
       />
     </View>
   );
 };
 
-const renderPopularity = (activePopularityIcons, inactivePopularityIcons) => {
+export const renderPopularity = (
+  activePopularityIcons,
+  inactivePopularityIcons
+) => {
   return (
     <View>
       <Text style={styles.pageSubHeader}>Popularity</Text>
@@ -146,6 +142,32 @@ const renderPopularity = (activePopularityIcons, inactivePopularityIcons) => {
           />
         ))}
       </View>
+    </View>
+  );
+};
+
+const renderGenres = (genreList) => {
+  return (
+    <View>
+      <Text style={styles.pageSubHeader}>Genres</Text>
+      <FlatList
+        showsHorizontalScrollIndicator={false}
+        horizontal={true}
+        style={{ flex: 1, width: "100%" }}
+        data={genreList}
+        renderItem={({ item, index }) => {
+          return (
+            <View style={styles.genreContainer}>
+              <Text style={styles.genreText}>
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </Text>
+            </View>
+          );
+        }}
+        keyExtractor={(item, index) => {
+          return index;
+        }}
+      />
     </View>
   );
 };

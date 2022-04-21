@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     textAlign: "left",
-    marginVertical: 10,
+    marginVertical: 13,
   },
   //Carousel
   carouselContainer: {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   galleryView: {
-    margin: 10,
+    marginHorizontal: 10,
     flex: 1,
   },
   galleryImage: {
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   },
   // Track info page
   songNameInfoPage: {
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: "600",
   },
   artistNameInfoPage: {

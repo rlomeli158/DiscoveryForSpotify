@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { Pressable, Dimensions, ScrollView, Image } from "react-native";
+import { Pressable, ScrollView, Image } from "react-native";
 import { useSelector } from "react-redux";
 import {
-  callGetArtistAlbums,
-  callGetArtistTopTracks,
+  callCheckTrackSaveStatus,
+  callDeleteTrack,
   callGetInfo,
-  callGetRelatedArtists,
+  callGetRecommendationsApi,
+  callGetTrackFeatures,
+  callSaveTrack,
 } from "../client/spotifyClient";
 import Gallery, {
   breakUpArtistArray,
@@ -14,26 +16,36 @@ import Gallery, {
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 import { FontAwesome } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-import { Audio } from "expo-av";
 import { playTrack, stopTrack } from "../components/Carousel/InfoAndPlayer";
-
-const { width: screenWidth } = Dimensions.get("window");
+import * as Progress from "react-native-progress";
+import { loadingIcon, renderPopularity } from "./InfoScreenArtist";
 
 const InfoScreenTrack = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
   const { type, id } = route.params;
   const [loading, setLoading] = useState(true);
   const [track, setTrack] = useState(false);
+  const [audioFeatures, setAudioFeatures] = useState(false);
+  const [recommendedTracks, setRecommendedTracks] = useState(false);
+  const [saveStatus, setSavedStatus] = useState("");
   const [sound, setSound] = useState(false);
 
   useEffect(async () => {
     setTrack(await callGetInfo(type, id, token));
     // Get audio features
+    setAudioFeatures(await callGetTrackFeatures(id, token));
+    const currentTrack = {
+      type: "track",
+      id: id,
+    };
     // Tracks like this
-    // Add song to your liked
+    setRecommendedTracks(
+      await callGetRecommendationsApi([currentTrack], 10, token)
+    );
+    // Check if song is in liked
+    setSavedStatus(await callCheckTrackSaveStatus(id, token));
+
     setLoading(false);
   }, []);
 
@@ -43,10 +55,13 @@ const InfoScreenTrack = ({ route, navigation }) => {
   const activePopularityIcons = Math.round(track.popularity / 10);
   const inactivePopularityIcons = 10 - activePopularityIcons;
 
+  // Duration
+  const duration = new Date(track.duration_ms);
+
   return (
     <ScrollView
       style={styles.infoPageContainer}
-      contentContainerStyle={{ paddingBottom: 100 }}
+      contentContainerStyle={{ paddingBottom: 50 }}
     >
       {loading ? (
         loadingIcon()
@@ -55,9 +70,18 @@ const InfoScreenTrack = ({ route, navigation }) => {
           <Image style={styles.infoImage} source={{ uri: imageUrl }} />
           <View style={styles.infoPageTextContainer}>
             <View style={{ flexDirection: "row" }}>
-              {renderSongInfo(track.name, track.artists)}
+              {renderSongInfo(track.name, track.artists, duration)}
             </View>
-            {renderPlayButton(track, sound, setSound)}
+            {renderInteractions(
+              track,
+              sound,
+              setSound,
+              saveStatus,
+              setSavedStatus,
+              token
+            )}
+            {renderRecommendedTracks(recommendedTracks)}
+            {renderAudioFeatures(audioFeatures)}
             {renderPopularity(activePopularityIcons, inactivePopularityIcons)}
           </View>
         </>
@@ -66,93 +90,168 @@ const InfoScreenTrack = ({ route, navigation }) => {
   );
 };
 
-export const loadingIcon = () => {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        height: screenWidth,
-        width: screenWidth,
-      }}
-    >
-      <AntDesign
-        name="loading1"
-        size={100}
-        color={CustomColors.dark.primaryColor}
-      />
-    </View>
-  );
-};
+const renderSongInfo = (songName, artists, duration) => {
+  const artistString = breakUpArtistArray(artists);
 
-const renderPopularity = (activePopularityIcons, inactivePopularityIcons) => {
+  const currentSeconds = duration.getSeconds();
+  let formattedSeconds = currentSeconds;
+  if (currentSeconds < 10) {
+    formattedSeconds = "0" + duration.getSeconds();
+  }
+
   return (
-    <View>
-      <Text style={styles.pageSubHeader}>Popularity</Text>
+    <View style={{ flexDirection: "column", width: "100%" }}>
+      <Text style={styles.songNameInfoPage}>{songName}</Text>
       <View
         style={{
-          paddingTop: 5,
           flexDirection: "row",
+          flex: 1,
           justifyContent: "space-between",
         }}
       >
-        {[...Array(activePopularityIcons)].map((value, index) => (
-          <FontAwesome
-            name="user-circle"
-            size={screenWidth / 11.5}
-            color={CustomColors.dark.primaryColor}
-            key={index}
-          />
-        ))}
-        {[...Array(inactivePopularityIcons)].map((value, index) => (
-          <FontAwesome
-            name="user-circle-o"
-            size={screenWidth / 11.5}
-            color={CustomColors.dark.formBackground}
-            key={index}
-          />
-        ))}
+        <Text style={styles.artistNameInfoPage}>{artistString}</Text>
+        <Text
+          style={{
+            color: CustomColors.dark.primaryColor,
+          }}
+        >
+          {`${duration.getMinutes()}:${formattedSeconds}`}
+        </Text>
       </View>
     </View>
   );
 };
 
-const renderSongInfo = (songName, artists) => {
-  const artistString = breakUpArtistArray(artists);
-
+const renderInteractions = (
+  track,
+  sound,
+  setSound,
+  saveStatus,
+  setSavedStatus,
+  token
+) => {
   return (
-    <View style={{ flexDirection: "column" }}>
-      <Text style={styles.songNameInfoPage}>{songName}</Text>
-      <Text style={styles.artistNameInfoPage}>{artistString}</Text>
+    <View
+      style={
+        ([styles.playContainer],
+        {
+          alignSelf: "center",
+          flexDirection: "row",
+          margin: 10,
+        })
+      }
+    >
+      <FontAwesome
+        style={{ marginHorizontal: 5 }}
+        name="comment-o"
+        size={50}
+        color="white"
+      />
+      {track.preview_url ? (
+        sound ? (
+          <Pressable
+            onPress={() => {
+              stopTrack(sound, setSound);
+            }}
+          >
+            <FontAwesome
+              style={{ marginHorizontal: 5 }}
+              name="pause-circle"
+              size={50}
+              color="white"
+            />
+          </Pressable>
+        ) : (
+          <Pressable
+            onPress={() => {
+              playTrack(track.preview_url, setSound);
+            }}
+          >
+            <FontAwesome
+              style={{ marginHorizontal: 5 }}
+              name="play-circle"
+              size={50}
+              color="white"
+            />
+          </Pressable>
+        )
+      ) : null}
+      {saveStatus ? (
+        <Pressable
+          onPress={async () => {
+            await callDeleteTrack(track.id, token);
+            setSavedStatus(await callCheckTrackSaveStatus(track.id, token));
+          }}
+        >
+          <FontAwesome
+            style={{ marginHorizontal: 5 }}
+            name="heart"
+            size={50}
+            color="white"
+          />
+        </Pressable>
+      ) : (
+        <Pressable
+          onPress={async () => {
+            await callSaveTrack(track.id, token);
+            setSavedStatus(await callCheckTrackSaveStatus(track.id, token));
+          }}
+        >
+          <FontAwesome
+            style={{ marginHorizontal: 5 }}
+            name="heart-o"
+            size={50}
+            color="white"
+          />
+        </Pressable>
+      )}
     </View>
   );
 };
 
-const renderPlayButton = (track, sound, setSound) => {
-  return track.preview_url ? (
-    sound ? (
-      <View style={([styles.playContainer], { alignSelf: "center" })}>
-        <Pressable
-          onPress={() => {
-            stopTrack(sound, setSound);
-          }}
-        >
-          <Ionicons name="pause-circle-outline" size={80} color="white" />
-        </Pressable>
+const renderRecommendedTracks = (recommendedTracks) => {
+  return <Gallery title="Tracks Like This" data={recommendedTracks} />;
+};
+
+const renderAudioFeatures = (audioFeatures) => {
+  return (
+    <View>
+      <Text style={styles.pageSubHeader}>Key Features</Text>
+      <View
+        style={{
+          width: "100%",
+          flexDirection: "row",
+          flexWrap: "wrap",
+        }}
+      >
+        <AudioFeatureBar
+          featureName="Acousticness"
+          stat={audioFeatures.acousticness}
+        />
+        <AudioFeatureBar
+          featureName="Danceability"
+          stat={audioFeatures.danceability}
+        />
+        <AudioFeatureBar featureName="Energy" stat={audioFeatures.energy} />
+        <AudioFeatureBar featureName="Happiness" stat={audioFeatures.valence} />
       </View>
-    ) : (
-      <View style={([styles.playContainer], { alignSelf: "center" })}>
-        <Pressable
-          onPress={() => {
-            playTrack(track.preview_url, setSound);
-          }}
-        >
-          <Ionicons name="play-circle-outline" size={80} color="white" />
-        </Pressable>
-      </View>
-    )
-  ) : null;
+    </View>
+  );
+};
+
+const AudioFeatureBar = ({ featureName, stat }) => {
+  return (
+    <View style={{ width: "47%", margin: 5 }}>
+      <Text>{featureName}</Text>
+      <Progress.Bar
+        color={CustomColors.dark.primaryColor}
+        progress={stat}
+        borderWidth={2}
+        height={15}
+        width={null}
+      />
+    </View>
+  );
 };
 
 export default InfoScreenTrack;
