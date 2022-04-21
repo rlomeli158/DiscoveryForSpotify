@@ -32,13 +32,13 @@ const Gallery = ({ title, data }) => {
               onPress={() => {
                 if (songName) {
                   console.log(songName);
-                  navigation.navigate("Info", {
+                  navigation.push("InfoScreenTrack", {
                     type: item.type,
                     id: item.id,
                   });
                 } else {
                   console.log(artistName);
-                  navigation.navigate("Info", {
+                  navigation.push("InfoScreenArtist", {
                     type: item.type,
                     id: item.id,
                   });
@@ -136,7 +136,7 @@ export const getSongInfo = (item) => {
   return [songName, artists, artistName, playlistName];
 };
 
-const breakUpArtistArray = (artists) => {
+export const breakUpArtistArray = (artists) => {
   let artistString = "";
   if (artists.length === 1) {
     artistString += artists[0].name;

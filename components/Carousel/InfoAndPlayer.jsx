@@ -80,7 +80,7 @@ const OverflowItems = ({ data, scrollXAnimated, sound, setSound }) => {
   );
 };
 
-const playTrack = async (link, setSound) => {
+export const playTrack = async (link, setSound) => {
   const source = { uri: link };
 
   const { sound } = await Audio.Sound.createAsync(source);
@@ -89,7 +89,7 @@ const playTrack = async (link, setSound) => {
   await sound.playAsync();
 };
 
-const stopTrack = async (sound, setSound) => {
+export const stopTrack = async (sound, setSound) => {
   if (sound) {
     await sound.unloadAsync();
     setSound(false);

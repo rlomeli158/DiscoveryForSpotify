@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dimensions, ScrollView, Image } from "react-native";
+import { Pressable, Dimensions, ScrollView, Image } from "react-native";
 import { useSelector } from "react-redux";
 import {
   callGetArtistAlbums,
@@ -7,37 +7,40 @@ import {
   callGetInfo,
   callGetRelatedArtists,
 } from "../client/spotifyClient";
-import Gallery, { getImageUrl } from "../components/Gallery/Gallery";
+import Gallery, {
+  breakUpArtistArray,
+  getImageUrl,
+} from "../components/Gallery/Gallery";
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
+import { Audio } from "expo-av";
+import { playTrack, stopTrack } from "../components/Carousel/InfoAndPlayer";
 
 const { width: screenWidth } = Dimensions.get("window");
 
-const InfoScreen = ({ route, navigation }) => {
+const InfoScreenTrack = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
   const { type, id } = route.params;
   const [loading, setLoading] = useState(true);
-  const [info, setInfo] = useState(false);
-  const [artistAlbums, setArtistAlbums] = useState(false);
-  const [relatedArtists, setRelatedArtists] = useState(false);
-  const [artistTopTracks, setArtistTopTracks] = useState(false);
+  const [track, setTrack] = useState(false);
+  const [sound, setSound] = useState(false);
 
   useEffect(async () => {
-    setInfo(await callGetInfo(type, id, token));
-    if (type == "artist") {
-      setArtistTopTracks(await callGetArtistTopTracks(id, token)); // Array
-      setArtistAlbums(await callGetArtistAlbums(id, token)); // Array
-      setRelatedArtists(await callGetRelatedArtists(id, token)); // Array
-    }
+    setTrack(await callGetInfo(type, id, token));
+    // Get audio features
+    // Tracks like this
+    // Add song to your liked
     setLoading(false);
   }, []);
 
-  const imageUrl = getImageUrl(info);
+  const imageUrl = getImageUrl(track);
 
-  const activePopularityIcons = Math.round(info.popularity / 10);
+  // Popularity
+  const activePopularityIcons = Math.round(track.popularity / 10);
   const inactivePopularityIcons = 10 - activePopularityIcons;
 
   return (
@@ -52,20 +55,9 @@ const InfoScreen = ({ route, navigation }) => {
           <Image style={styles.infoImage} source={{ uri: imageUrl }} />
           <View style={styles.infoPageTextContainer}>
             <View style={{ flexDirection: "row" }}>
-              <Text style={styles.artistSubheader}>{info.name}</Text>
-              <Text style={styles.artistFollowers}>
-                {info.followers.total.toLocaleString()} Followers
-              </Text>
+              {renderSongInfo(track.name, track.artists)}
             </View>
-            <Gallery
-              title={`${info.name}'s Top Tracks`}
-              data={artistTopTracks}
-            />
-            <Gallery title={`${info.name}'s Top Albums`} data={artistAlbums} />
-            <Gallery
-              title={`Artists Like ${info.name}`}
-              data={relatedArtists}
-            />
+            {renderPlayButton(track, sound, setSound)}
             {renderPopularity(activePopularityIcons, inactivePopularityIcons)}
           </View>
         </>
@@ -126,4 +118,41 @@ const renderPopularity = (activePopularityIcons, inactivePopularityIcons) => {
   );
 };
 
-export default InfoScreen;
+const renderSongInfo = (songName, artists) => {
+  const artistString = breakUpArtistArray(artists);
+
+  return (
+    <View style={{ flexDirection: "column" }}>
+      <Text style={styles.songNameInfoPage}>{songName}</Text>
+      <Text style={styles.artistNameInfoPage}>{artistString}</Text>
+    </View>
+  );
+};
+
+const renderPlayButton = (track, sound, setSound) => {
+  return track.preview_url ? (
+    sound ? (
+      <View style={([styles.playContainer], { alignSelf: "center" })}>
+        <Pressable
+          onPress={() => {
+            stopTrack(sound, setSound);
+          }}
+        >
+          <Ionicons name="pause-circle-outline" size={80} color="white" />
+        </Pressable>
+      </View>
+    ) : (
+      <View style={([styles.playContainer], { alignSelf: "center" })}>
+        <Pressable
+          onPress={() => {
+            playTrack(track.preview_url, setSound);
+          }}
+        >
+          <Ionicons name="play-circle-outline" size={80} color="white" />
+        </Pressable>
+      </View>
+    )
+  ) : null;
+};
+
+export default InfoScreenTrack;

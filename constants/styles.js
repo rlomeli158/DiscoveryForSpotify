@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     textAlign: "left",
-    marginBottom: 5,
+    marginVertical: 10,
   },
   //Carousel
   carouselContainer: {
@@ -106,19 +106,39 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   artistSubheader: {
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: "700",
     color: CustomColors.dark.primaryColor,
   },
   artistFollowers: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: CustomColors.dark.formBackground,
+    textAlign: "left",
+    flex: 1,
+    marginBottom: 5,
+  },
+  genreContainer: {
+    flex: 1,
+    borderRadius: 20,
+    backgroundColor: "#696969",
+    padding: 10,
+    margin: 5,
+  },
+  genreText: {
+    flex: 1,
     fontSize: 15,
     fontWeight: "700",
+  },
+  // Track info page
+  songNameInfoPage: {
+    fontSize: 25,
+    fontWeight: "600",
+  },
+  artistNameInfoPage: {
+    fontSize: 15,
+    fontWeight: "600",
     color: CustomColors.dark.primaryColor,
-    textAlign: "right",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
   },
   //Carousel Pagination
   dotContainer: {
@@ -142,14 +162,17 @@ const styles = StyleSheet.create({
   artistName: {
     paddingTop: 10,
     fontSize: 15,
+    fontWeight: "700",
   },
   artistNameWithSong: {
     fontSize: 13,
     color: CustomColors.dark.primaryColor,
+    fontWeight: "700",
   },
   songName: {
     paddingTop: 10,
     fontSize: 15,
+    fontWeight: "700",
   },
   //Genre listings
   genreView: {
