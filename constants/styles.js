@@ -140,6 +140,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: CustomColors.dark.primaryColor,
   },
+  // Playlist info page
+  playlistName: {
+    fontSize: 25,
+    fontWeight: "700",
+  },
   //Carousel Pagination
   dotContainer: {
     backgroundColor: CustomColors.dark.background,

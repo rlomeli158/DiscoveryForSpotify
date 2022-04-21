@@ -28,6 +28,7 @@ const InfoScreenTrack = ({ route, navigation }) => {
   const [track, setTrack] = useState(false);
   const [audioFeatures, setAudioFeatures] = useState(false);
   const [recommendedTracks, setRecommendedTracks] = useState(false);
+  const [artist, setArtist] = useState(false);
   const [saveStatus, setSavedStatus] = useState("");
   const [sound, setSound] = useState(false);
 
@@ -49,7 +50,14 @@ const InfoScreenTrack = ({ route, navigation }) => {
     setLoading(false);
   }, []);
 
+  useEffect(async () => {
+    if (track) {
+      setArtist(await callGetInfo("artist", track.artists[0].id, token));
+    }
+  }, [track]);
+
   const imageUrl = getImageUrl(track);
+  const artistImageUrl = getImageUrl(artist);
 
   // Popularity
   const activePopularityIcons = Math.round(track.popularity / 10);
@@ -81,6 +89,13 @@ const InfoScreenTrack = ({ route, navigation }) => {
               token
             )}
             {renderRecommendedTracks(recommendedTracks)}
+            {renderAlbum(
+              track.album,
+              imageUrl,
+              artist,
+              artistImageUrl,
+              navigation
+            )}
             {renderAudioFeatures(audioFeatures)}
             {renderPopularity(activePopularityIcons, inactivePopularityIcons)}
           </View>
@@ -136,15 +151,16 @@ const renderInteractions = (
         ([styles.playContainer],
         {
           alignSelf: "center",
+          alignItems: "center",
           flexDirection: "row",
           margin: 10,
         })
       }
     >
       <FontAwesome
-        style={{ marginHorizontal: 5 }}
+        style={{ marginHorizontal: 10 }}
         name="comment-o"
-        size={50}
+        size={35}
         color="white"
       />
       {track.preview_url ? (
@@ -155,7 +171,7 @@ const renderInteractions = (
             }}
           >
             <FontAwesome
-              style={{ marginHorizontal: 5 }}
+              style={{ marginHorizontal: 10 }}
               name="pause-circle"
               size={50}
               color="white"
@@ -168,7 +184,7 @@ const renderInteractions = (
             }}
           >
             <FontAwesome
-              style={{ marginHorizontal: 5 }}
+              style={{ marginHorizontal: 10 }}
               name="play-circle"
               size={50}
               color="white"
@@ -184,9 +200,9 @@ const renderInteractions = (
           }}
         >
           <FontAwesome
-            style={{ marginHorizontal: 5 }}
+            style={{ marginHorizontal: 10 }}
             name="heart"
-            size={50}
+            size={35}
             color="white"
           />
         </Pressable>
@@ -198,9 +214,11 @@ const renderInteractions = (
           }}
         >
           <FontAwesome
-            style={{ marginHorizontal: 5 }}
+            style={{
+              marginHorizontal: 10,
+            }}
             name="heart-o"
-            size={50}
+            size={35}
             color="white"
           />
         </Pressable>
@@ -213,7 +231,60 @@ const renderRecommendedTracks = (recommendedTracks) => {
   return <Gallery title="Tracks Like This" data={recommendedTracks} />;
 };
 
-const renderAudioFeatures = (audioFeatures) => {
+const renderAlbum = (album, imageUrl, artist, artistImage, navigation) => {
+  return (
+    <View style={{ flexDirection: "row" }}>
+      <View style={{ width: "50%" }}>
+        <Text style={styles.pageSubHeader}>Artist</Text>
+        <Pressable
+          onPress={() => {
+            navigation.push("InfoScreenArtist", {
+              type: "artist",
+              id: artist.id,
+            });
+          }}
+        >
+          <Image style={styles.galleryImage} source={{ uri: artistImage }} />
+          <Text style={{ paddingTop: 10 }}>{artist.name}</Text>
+        </Pressable>
+      </View>
+      {album.album_type == "album" ? (
+        <View style={{ width: "50%" }}>
+          <Text style={styles.pageSubHeader}>Album</Text>
+          <Pressable
+            onPress={() => {
+              navigation.push("InfoScreenAlbum", {
+                id: album.id,
+              });
+            }}
+          >
+            <Image style={styles.galleryImage} source={{ uri: imageUrl }} />
+            <Text style={{ paddingTop: 10 }}>{album.name}</Text>
+          </Pressable>
+        </View>
+      ) : null}
+    </View>
+  );
+  if (album.album_type == "album") {
+    return (
+      <View style={{ width: "50%" }}>
+        <Text style={styles.pageSubHeader}>Album</Text>
+        <Pressable
+          onPress={() => {
+            navigation.push("InfoScreenAlbum", {
+              id: album.id,
+            });
+          }}
+        >
+          <Image style={styles.galleryImage} source={{ uri: imageUrl }} />
+          <Text style={{ paddingTop: 10 }}>{album.name}</Text>
+        </Pressable>
+      </View>
+    );
+  }
+};
+
+export const renderAudioFeatures = (audioFeatures) => {
   return (
     <View>
       <Text style={styles.pageSubHeader}>Key Features</Text>

@@ -30,17 +30,23 @@ const Gallery = ({ title, data }) => {
           return (
             <Pressable
               onPress={() => {
-                if (songName) {
-                  console.log(songName);
+                if (item.type == "album") {
+                  navigation.push("InfoScreenAlbum", {
+                    id: item.id,
+                  });
+                } else if (songName) {
                   navigation.push("InfoScreenTrack", {
                     type: item.type,
                     id: item.id,
                   });
-                } else {
-                  console.log(artistName);
+                } else if (artistName) {
                   navigation.push("InfoScreenArtist", {
                     type: item.type,
                     id: item.id,
+                  });
+                } else if (playlistName) {
+                  navigation.push("InfoScreenPlaylist", {
+                    playlist: item,
                   });
                 }
               }}

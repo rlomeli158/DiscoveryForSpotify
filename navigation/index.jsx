@@ -20,6 +20,8 @@ import Discover from "../screens/DiscoverScreen";
 import HomeScreen from "../screens/HomeScreen";
 import InfoScreenArtist from "../screens/InfoScreenArtist";
 import InfoScreenTrack from "../screens/InfoScreenTrack";
+import InfoScreenPlaylist from "../screens/InfoScreenPlaylist";
+import InfoScreenAlbum from "../screens/InfoScreenAlbum";
 
 export default function Navigation({ colorScheme }) {
   return (
@@ -61,6 +63,16 @@ function RootNavigator() {
       <Stack.Screen
         name="InfoScreenTrack"
         component={InfoScreenTrack}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="InfoScreenPlaylist"
+        component={InfoScreenPlaylist}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="InfoScreenAlbum"
+        component={InfoScreenAlbum}
         options={{ headerShown: false }}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>

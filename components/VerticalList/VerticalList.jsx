@@ -4,15 +4,25 @@ import styles from "../../constants/styles";
 import { getImageUrl, getSongInfo, renderSongInfo } from "../Gallery/Gallery";
 import { Text, View } from "../Themed";
 
-const VerticalList = ({ title, data }) => {
+const VerticalList = ({ title, data, albumImage = "", numberOfTracks }) => {
   const navigation = useNavigation();
+
   return (
     <View>
-      <Text style={styles.pageSubHeader}>{title}</Text>
+      <Text style={styles.pageSubHeader}>
+        {numberOfTracks ? `${numberOfTracks} ${title}` : title}
+      </Text>
       <FlatList
         data={data}
         renderItem={({ item }) => {
-          const imageUrl = getImageUrl(item);
+          if (item.added_at) {
+            item = item.track;
+          }
+          let imageUrl = albumImage;
+          if (albumImage == "") {
+            imageUrl = getImageUrl(item);
+          }
+
           const songInfoArray = getSongInfo(item);
 
           const songName = songInfoArray[0];
@@ -24,8 +34,8 @@ const VerticalList = ({ title, data }) => {
             <Pressable
               onPress={() => {
                 navigation.push("InfoScreenTrack", {
-                  type: item.track.type,
-                  id: item.track.id,
+                  type: "track",
+                  id: numberOfTracks ? item.id : item.track.id,
                 });
               }}
             >

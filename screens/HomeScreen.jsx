@@ -19,6 +19,7 @@ import {
 WebBrowser.maybeCompleteAuthSession();
 import { setToken } from "../redux/features/token";
 import VerticalList from "../components/VerticalList/VerticalList";
+import { loadingIcon } from "./InfoScreenArtist";
 
 const name = "Steve";
 
@@ -37,6 +38,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [recentlyPlayed, setRecentlyPlayed] = useState();
   const [playlists, setPlaylists] = useState(false);
   const [tokenReceived, setTokenReceived] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [request, response, promptAsync] = useAuthRequest(
     {
@@ -86,21 +88,32 @@ const HomeScreen = ({ route, navigation }) => {
     setPlaylists(await callGetPlaylists(token));
   }, [tokenReceived]);
 
+  useEffect(() => {
+    if (playlists) {
+      setLoading(false);
+    }
+  }, [playlists]);
+
   return (
     <ScrollView
       style={[styles.pageContainer]}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      <View>
-        <Text style={styles.pageHeader}>Welcome back, {name}</Text>
-      </View>
-      <View>
-        <Gallery title="Your Top Artists" data={topArtists} />
-        <Gallery title="Your Top Songs" data={topTracks} />
-        <Gallery title="Your Playlists" data={playlists} />
-        {/* <Gallery title="Your Recently Played" data={recentlyPlayed} /> */}
-        <VerticalList title="Your Recently Played" data={recentlyPlayed} />
-      </View>
+      {loading ? (
+        loadingIcon()
+      ) : (
+        <>
+          <View>
+            <Text style={styles.pageHeader}>Welcome back, {name}</Text>
+          </View>
+          <View>
+            <Gallery title="Your Top Artists" data={topArtists} />
+            <Gallery title="Your Top Songs" data={topTracks} />
+            <Gallery title="Your Playlists" data={playlists} />
+            <VerticalList title="Your Recently Played" data={recentlyPlayed} />
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 };

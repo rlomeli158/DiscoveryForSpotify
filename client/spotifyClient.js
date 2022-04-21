@@ -347,3 +347,68 @@ export const callCheckTrackSaveStatus = async (id, token) => {
     console.log(err);
   }
 };
+
+export const callGetAlbumInfo = async (id, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/albums/${id}`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let albumInfo = await spotifyResponse.json();
+
+    return albumInfo;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetMultipleTracksFeatures = async (trackIds, token) => {
+  const encodedTrackIds = encodeURIComponent(trackIds);
+  let spotifyUrl = `https://api.spotify.com/v1/audio-features?ids=${encodedTrackIds}`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let audioFeatures = await spotifyResponse.json();
+
+    let acousticness = 0;
+    let danceability = 0;
+    let energy = 0;
+    let valence = 0;
+    audioFeatures.audio_features.forEach((audio) => {
+      acousticness += audio.acousticness;
+      danceability += audio.danceability;
+      energy += audio.energy;
+      valence += audio.valence;
+    });
+
+    const numOfTracks = audioFeatures.audio_features.length;
+    acousticness = acousticness / numOfTracks;
+    danceability = danceability / numOfTracks;
+    energy = energy / numOfTracks;
+    valence = valence / numOfTracks;
+
+    const cleanedAudioFeatures = {
+      acousticness: acousticness,
+      danceability: danceability,
+      energy: energy,
+      valence: valence,
+    };
+
+    console.log(cleanedAudioFeatures);
+
+    return cleanedAudioFeatures;
+  } catch (err) {
+    console.log(err);
+  }
+};
