@@ -13,7 +13,6 @@ import useColorScheme from "../hooks/useColorScheme";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import Recommendations from "../screens/RecommendationsScreen";
-import TabOneScreen from "../screens/DiscoverScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import LinkingConfiguration from "./LinkingConfiguration";
 import Discover from "../screens/DiscoverScreen";
@@ -22,6 +21,8 @@ import InfoScreenArtist from "../screens/InfoScreenArtist";
 import InfoScreenTrack from "../screens/InfoScreenTrack";
 import InfoScreenPlaylist from "../screens/InfoScreenPlaylist";
 import InfoScreenAlbum from "../screens/InfoScreenAlbum";
+import CustomColors from "../constants/Colors";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Navigation({ colorScheme }) {
   return (
@@ -55,6 +56,43 @@ function RootNavigator() {
         component={Recommendations}
         options={{ headerShown: false }}
       />
+      {/* <Stack.Screen
+        name="InfoScreenArtist"
+        component={InfoScreenArtist}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="InfoScreenTrack"
+        component={InfoScreenTrack}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="InfoScreenPlaylist"
+        component={InfoScreenPlaylist}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="InfoScreenAlbum"
+        component={InfoScreenAlbum}
+        options={{ headerShown: false }}
+      /> */}
+      <Stack.Group screenOptions={{ presentation: "modal" }}>
+        <Stack.Screen name="Modal" component={ModalScreen} />
+      </Stack.Group>
+    </Stack.Navigator>
+  );
+}
+
+const HomeStack = createNativeStackNavigator();
+
+function HomeStackScreen() {
+  return (
+    <HomeStack.Navigator initialRouteName="Home">
+      <HomeStack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="InfoScreenArtist"
         component={InfoScreenArtist}
@@ -75,10 +113,7 @@ function RootNavigator() {
         component={InfoScreenAlbum}
         options={{ headerShown: false }}
       />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
-    </Stack.Navigator>
+    </HomeStack.Navigator>
   );
 }
 
@@ -93,18 +128,19 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Home"
+      initialRouteName="HomeScreen"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarActiveTintColor: CustomColors.dark.primaryColor,
+        tabBarInactiveTintColor: "#FFF",
       }}
     >
       <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="HomeScreen"
+        component={HomeStackScreen}
         options={({ navigation }) => ({
           title: "Home",
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         })}
       />
       <BottomTab.Screen
@@ -113,7 +149,14 @@ function BottomTabNavigator() {
         options={({ navigation }) => ({
           title: "Discover",
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons
+              name="saved-search"
+              size={30}
+              style={{ marginBottom: -3 }}
+              color={CustomColors.dark.primaryColor}
+            />
+          ),
         })}
       />
       <BottomTab.Screen
@@ -124,15 +167,6 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
-      {/* <BottomTab.Screen
-        name="Recommendations"
-        component={Recommendations}
-        options={{
-          headerShown: false,
-          title: "Recommendations",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-      /> */}
     </BottomTab.Navigator>
   );
 }

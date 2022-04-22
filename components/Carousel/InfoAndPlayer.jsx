@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   Pressable,
   Animated,
@@ -11,6 +11,10 @@ import CustomColors from "../../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import { Text } from "../Themed";
+import { useSelector, useDispatch } from "react-redux";
+import { setPlayingSound } from "../../redux/features/playingSound";
+import { renderInteractions } from "../../screens/InfoScreenTrack";
+import { callCheckTrackSaveStatus } from "../../client/spotifyClient";
 
 const { width } = Dimensions.get("screen");
 
@@ -20,12 +24,26 @@ const ITEM_WIDTH = width * 0.76;
 const ITEM_HEIGHT = ITEM_WIDTH * 1.7;
 const VISIBLE_ITEMS = 3;
 
-const OverflowItems = ({ data, scrollXAnimated, sound, setSound }) => {
+const OverflowItems = ({ data, scrollXAnimated }) => {
+  const token = useSelector((state) => state.token.value);
+  const playingSound = useSelector((state) => state.playingSound.value);
+  const dispatch = useDispatch();
+
+  const [saveStatus, setSavedStatus] = useState(false);
+
   const inputRange = [-1, 0, 1];
   const translateY = scrollXAnimated.interpolate({
     inputRange,
     outputRange: [OVERFLOW_HEIGHT, 0, -OVERFLOW_HEIGHT],
   });
+
+  useEffect(async () => {
+    let saveStatusObj = {};
+    await data.forEach(async (track) => {
+      saveStatusObj[track.id] = await callCheckTrackSaveStatus(track.id, token);
+    });
+    setSavedStatus(saveStatusObj);
+  }, []);
 
   return (
     <View style={styles.overflowContainer}>
@@ -40,37 +58,22 @@ const OverflowItems = ({ data, scrollXAnimated, sound, setSound }) => {
               <Text style={[styles.artistName]} numberOfLines={2}>
                 {trackDetails[1]}
               </Text>
-              {item.preview_url ? (
-                sound ? (
-                  <View style={styles.playContainer}>
-                    <Pressable
-                      onPress={() => {
-                        stopTrack(sound, setSound);
-                      }}
-                    >
-                      <Ionicons
-                        name="pause-circle-outline"
-                        size={80}
-                        color="white"
-                      />
-                    </Pressable>
-                  </View>
-                ) : (
-                  <View style={styles.playContainer}>
-                    <Pressable
-                      onPress={() => {
-                        playTrack(item.preview_url, setSound);
-                      }}
-                    >
-                      <Ionicons
-                        name="play-circle-outline"
-                        size={80}
-                        color="white"
-                      />
-                    </Pressable>
-                  </View>
-                )
-              ) : null}
+              {renderInteractions(
+                item,
+                playingSound,
+                dispatch,
+                saveStatus[item.id],
+                async () => {
+                  let saveStatusClone = JSON.parse(JSON.stringify(saveStatus));
+                  saveStatusClone[item.id] = await callCheckTrackSaveStatus(
+                    item.id,
+                    token
+                  );
+                  setSavedStatus(saveStatusClone);
+                },
+                token
+              )}
+
               <View style={styles.itemContainerRow}></View>
             </View>
           );
@@ -80,19 +83,23 @@ const OverflowItems = ({ data, scrollXAnimated, sound, setSound }) => {
   );
 };
 
-export const playTrack = async (link, setSound) => {
+const getSaveStatus = async (id, token) => {
+  return await callCheckTrackSaveStatus(id, token);
+};
+
+export const playTrack = async (link, dispatch) => {
   const source = { uri: link };
 
   const { sound } = await Audio.Sound.createAsync(source);
-  setSound(sound);
+  dispatch(setPlayingSound(sound));
 
   await sound.playAsync();
 };
 
-export const stopTrack = async (sound, setSound) => {
-  if (sound) {
-    await sound.unloadAsync();
-    setSound(false);
+export const stopTrack = async (playingSound, dispatch) => {
+  if (playingSound) {
+    await playingSound.stopAsync();
+    dispatch(setPlayingSound(false));
   }
 };
 

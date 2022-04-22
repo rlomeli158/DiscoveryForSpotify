@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Dimensions, ScrollView, Image, FlatList } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  Image,
+  ImageBackground,
+  FlatList,
+  Pressable,
+} from "react-native";
 import { useSelector } from "react-redux";
 import {
   callGetArtistAlbums,
@@ -11,6 +18,7 @@ import Gallery, { getImageUrl } from "../components/Gallery/Gallery";
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
 import * as Progress from "react-native-progress";
 
@@ -49,7 +57,7 @@ const InfoScreenArtist = ({ route, navigation }) => {
         loadingIcon()
       ) : (
         <>
-          <Image style={styles.infoImage} source={{ uri: imageUrl }} />
+          {renderImage(imageUrl, navigation)}
           <View style={styles.infoPageTextContainer}>
             <View>
               <Text style={styles.artistSubheader}>{artist.name}</Text>
@@ -77,6 +85,26 @@ const InfoScreenArtist = ({ route, navigation }) => {
         </>
       )}
     </ScrollView>
+  );
+};
+
+export const renderImage = (imageUrl, navigation) => {
+  return (
+    <ImageBackground style={styles.infoImage} source={{ uri: imageUrl }}>
+      <Pressable onPress={() => navigation.goBack()}>
+        <Ionicons
+          name="chevron-back-circle-outline"
+          size={50}
+          // color={CustomColors.dark.primaryColor}
+          color="#FFF"
+          style={{
+            position: "absolute",
+            top: 50,
+            left: 10,
+          }}
+        />
+      </Pressable>
+    </ImageBackground>
   );
 };
 

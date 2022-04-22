@@ -10,7 +10,7 @@ import { Text, View } from "../components/Themed";
 import VerticalList from "../components/VerticalList/VerticalList";
 import styles from "../constants/styles";
 import { getTracksIds } from "./InfoScreenAlbum";
-import { loadingIcon } from "./InfoScreenArtist";
+import { loadingIcon, renderImage } from "./InfoScreenArtist";
 import { renderAudioFeatures } from "./InfoScreenTrack";
 
 const InfoScreenPlaylist = ({ route, navigation }) => {
@@ -45,7 +45,7 @@ const InfoScreenPlaylist = ({ route, navigation }) => {
         loadingIcon()
       ) : (
         <>
-          <Image style={styles.infoImage} source={{ uri: imageUrl }} />
+          {renderImage(imageUrl, navigation)}
           <View style={styles.infoPageTextContainer}>
             {renderPlaylistInfo(playlist)}
             {renderPlaylistDescription(playlist)}

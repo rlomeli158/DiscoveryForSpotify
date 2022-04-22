@@ -9,7 +9,7 @@ import { breakUpArtistArray, getImageUrl } from "../components/Gallery/Gallery";
 import { Text, View } from "../components/Themed";
 import VerticalList from "../components/VerticalList/VerticalList";
 import styles from "../constants/styles";
-import { loadingIcon, renderPopularity } from "./InfoScreenArtist";
+import { loadingIcon, renderImage, renderPopularity } from "./InfoScreenArtist";
 import { renderAudioFeatures } from "./InfoScreenTrack";
 
 const InfoScreenAlbum = ({ route, navigation }) => {
@@ -49,7 +49,7 @@ const InfoScreenAlbum = ({ route, navigation }) => {
         loadingIcon()
       ) : (
         <>
-          <Image style={styles.infoImage} source={{ uri: imageUrl }} />
+          {renderImage(imageUrl, navigation)}
           <View style={styles.infoPageTextContainer}>
             {renderAlbumInfo(albumInfo)}
             {renderPopularity(activePopularityIcons, inactivePopularityIcons)}

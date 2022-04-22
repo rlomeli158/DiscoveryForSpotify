@@ -15,6 +15,8 @@ import {
 } from "react-native-gesture-handler";
 import CustomColors from "../constants/Colors";
 import OverflowItems from "../components/Carousel/InfoAndPlayer";
+import { useSelector, useDispatch } from "react-redux";
+import { stopTrack } from "../components/Carousel/InfoAndPlayer";
 
 const { width } = Dimensions.get("screen");
 const SPACING = 0;
@@ -23,7 +25,9 @@ const ITEM_HEIGHT = ITEM_WIDTH * 1.7;
 const VISIBLE_ITEMS = 3;
 
 const Recommendations = ({ route, navigation }) => {
-  const [sound, setSound] = useState(false);
+  const playingSound = useSelector((state) => state.playingSound.value);
+  const dispatch = useDispatch();
+
   const scrollXIndex = useRef(new Animated.Value(0)).current;
   const scrollXAnimated = useRef(new Animated.Value(0)).current;
   const [index, setIndex] = useState(0);
@@ -40,7 +44,7 @@ const Recommendations = ({ route, navigation }) => {
   });
 
   useEffect(() => {
-    stopTrack(sound, setSound);
+    stopTrack(playingSound, dispatch);
   }, [index]);
 
   const { recommendedTracks } = route.params;
@@ -150,20 +154,11 @@ const Recommendations = ({ route, navigation }) => {
           <OverflowItems
             data={recommendedTracks}
             scrollXAnimated={scrollXAnimated}
-            sound={sound}
-            setSound={setSound}
           />
         </SafeAreaView>
       </FlingGestureHandler>
     </FlingGestureHandler>
   );
-};
-
-const stopTrack = async (sound, setSound) => {
-  if (sound) {
-    await sound.unloadAsync();
-    setSound(false);
-  }
 };
 
 const styles = StyleSheet.create({

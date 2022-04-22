@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Image } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   callCheckTrackSaveStatus,
   callDeleteTrack,
@@ -19,18 +19,22 @@ import { FontAwesome } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
 import { playTrack, stopTrack } from "../components/Carousel/InfoAndPlayer";
 import * as Progress from "react-native-progress";
-import { loadingIcon, renderPopularity } from "./InfoScreenArtist";
+import { loadingIcon, renderImage, renderPopularity } from "./InfoScreenArtist";
+import { setPlayingSound } from "../redux/features/playingSound";
 
 const InfoScreenTrack = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
+  const playingSound = useSelector((state) => state.playingSound.value);
+  const dispatch = useDispatch();
+
   const { type, id } = route.params;
+
   const [loading, setLoading] = useState(true);
   const [track, setTrack] = useState(false);
   const [audioFeatures, setAudioFeatures] = useState(false);
   const [recommendedTracks, setRecommendedTracks] = useState(false);
   const [artist, setArtist] = useState(false);
   const [saveStatus, setSavedStatus] = useState("");
-  const [sound, setSound] = useState(false);
 
   useEffect(async () => {
     setTrack(await callGetInfo(type, id, token));
@@ -56,6 +60,15 @@ const InfoScreenTrack = ({ route, navigation }) => {
     }
   }, [track]);
 
+  useEffect(async () => {
+    await navigation.addListener("blur", async () => {
+      if (playingSound != false) {
+        await playingSound.stopAsync();
+        dispatch(setPlayingSound(false));
+      }
+    });
+  }, [navigation, playingSound]);
+
   const imageUrl = getImageUrl(track);
   const artistImageUrl = getImageUrl(artist);
 
@@ -75,15 +88,15 @@ const InfoScreenTrack = ({ route, navigation }) => {
         loadingIcon()
       ) : (
         <>
-          <Image style={styles.infoImage} source={{ uri: imageUrl }} />
+          {renderImage(imageUrl, navigation)}
           <View style={styles.infoPageTextContainer}>
             <View style={{ flexDirection: "row" }}>
               {renderSongInfo(track.name, track.artists, duration)}
             </View>
             {renderInteractions(
               track,
-              sound,
-              setSound,
+              playingSound,
+              dispatch,
               saveStatus,
               setSavedStatus,
               token
@@ -137,10 +150,10 @@ const renderSongInfo = (songName, artists, duration) => {
   );
 };
 
-const renderInteractions = (
+export const renderInteractions = (
   track,
-  sound,
-  setSound,
+  playingSound,
+  dispatch,
   saveStatus,
   setSavedStatus,
   token
@@ -164,10 +177,10 @@ const renderInteractions = (
         color="white"
       />
       {track.preview_url ? (
-        sound ? (
+        playingSound ? (
           <Pressable
             onPress={() => {
-              stopTrack(sound, setSound);
+              stopTrack(playingSound, dispatch);
             }}
           >
             <FontAwesome
@@ -180,7 +193,7 @@ const renderInteractions = (
         ) : (
           <Pressable
             onPress={() => {
-              playTrack(track.preview_url, setSound);
+              playTrack(track.preview_url, dispatch);
             }}
           >
             <FontAwesome
