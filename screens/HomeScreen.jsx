@@ -82,8 +82,8 @@ const HomeScreen = ({ route, navigation }) => {
   }, [response]);
 
   useEffect(async () => {
-    setTopArtists(await callGetUsersTop("artists", token));
-    setTopTracks(await callGetUsersTop("tracks", token));
+    setTopArtists(await callGetUsersTop("artists", "short_term", token));
+    setTopTracks(await callGetUsersTop("tracks", "short_term", token));
     setRecentlyPlayed(await callRecentlyPlayed(token));
     setPlaylists(await callGetPlaylists(token));
   }, [tokenReceived]);

@@ -145,6 +145,34 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "700",
   },
+  // Grid styles: {
+  itemContainerInGrid: {
+    flexDirection: "column",
+    // marginHorizontal: 5,
+    margin: 3,
+    maxWidth: screenWidth / 3.25,
+    maxHeight: screenWidth / 2,
+  },
+  itemImageInGrid: {
+    resizeMode: "contain",
+    width: screenWidth / 3.25,
+    height: screenWidth / 3,
+  },
+  songNameInGrid: {
+    paddingTop: 6,
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  artistNameWithSongInGrid: {
+    fontSize: 10,
+    color: CustomColors.dark.primaryColor,
+    fontWeight: "700",
+  },
+  artistName: {
+    paddingTop: 10,
+    fontSize: 15,
+    fontWeight: "700",
+  },
   //Carousel Pagination
   dotContainer: {
     backgroundColor: CustomColors.dark.background,

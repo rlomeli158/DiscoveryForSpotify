@@ -83,16 +83,19 @@ export const callGetRecommendationsApi = async (
   }
 };
 
-export const callGetUsersTop = async (type, token) => {
+export const callGetUsersTop = async (type, term = "short_term", token) => {
   const spotifyUrl = "https://api.spotify.com/v1/me/top/";
 
   try {
-    let spotifyResponse = await fetch(spotifyUrl + type, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    let spotifyResponse = await fetch(
+      spotifyUrl + type + `?time_range=${term}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     let responseJson = await spotifyResponse.json();
     let recommendedTracks = responseJson.items;

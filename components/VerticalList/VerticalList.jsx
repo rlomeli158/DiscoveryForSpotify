@@ -51,7 +51,7 @@ const VerticalList = ({ title, data, albumImage = "", numberOfTracks }) => {
         keyExtractor={(item, index) => {
           return index;
         }}
-      ></FlatList>
+      />
     </View>
   );
 };

@@ -23,6 +23,8 @@ import InfoScreenPlaylist from "../screens/InfoScreenPlaylist";
 import InfoScreenAlbum from "../screens/InfoScreenAlbum";
 import CustomColors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import TopScreen from "../screens/TopScreen";
 
 export default function Navigation({ colorScheme }) {
   return (
@@ -93,27 +95,41 @@ function HomeStackScreen() {
         component={HomeScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      <HomeStack.Screen
         name="InfoScreenArtist"
         component={InfoScreenArtist}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      <HomeStack.Screen
         name="InfoScreenTrack"
         component={InfoScreenTrack}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      <HomeStack.Screen
         name="InfoScreenPlaylist"
         component={InfoScreenPlaylist}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      <HomeStack.Screen
         name="InfoScreenAlbum"
         component={InfoScreenAlbum}
         options={{ headerShown: false }}
       />
     </HomeStack.Navigator>
+  );
+}
+
+const TopStack = createNativeStackNavigator();
+
+function TopStackScreen() {
+  return (
+    <TopStack.Navigator initialRouteName="Top">
+      <TopStack.Screen
+        name="Top"
+        component={TopScreen}
+        options={{ headerShown: false }}
+      />
+    </TopStack.Navigator>
   );
 }
 
@@ -154,8 +170,19 @@ function BottomTabNavigator() {
               name="saved-search"
               size={30}
               style={{ marginBottom: -3 }}
-              color={CustomColors.dark.primaryColor}
+              color={color}
             />
+          ),
+        })}
+      />
+      <BottomTab.Screen
+        name="TopScreen"
+        component={TopStackScreen}
+        options={({ route, navigation }) => ({
+          title: "Top",
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Feather name="trending-up" size={30} color={color} />
           ),
         })}
       />
