@@ -17,7 +17,6 @@ import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
-import { playTrack, stopTrack } from "../components/Carousel/InfoAndPlayer";
 import * as Progress from "react-native-progress";
 import { loadingIcon, renderImage, renderPopularity } from "./InfoScreenArtist";
 import { setPlayingSound } from "../redux/features/playingSound";
@@ -238,6 +237,22 @@ export const renderInteractions = (
       )}
     </View>
   );
+};
+
+export const playTrack = async (link, dispatch) => {
+  const source = { uri: link };
+
+  const { sound } = await Audio.Sound.createAsync(source);
+  dispatch(setPlayingSound(sound));
+
+  await sound.playAsync();
+};
+
+export const stopTrack = async (playingSound, dispatch) => {
+  if (playingSound) {
+    await playingSound.stopAsync();
+    dispatch(setPlayingSound(false));
+  }
 };
 
 const renderRecommendedTracks = (recommendedTracks) => {

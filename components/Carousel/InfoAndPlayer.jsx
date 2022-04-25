@@ -13,7 +13,11 @@ import { Audio } from "expo-av";
 import { Text } from "../Themed";
 import { useSelector, useDispatch } from "react-redux";
 import { setPlayingSound } from "../../redux/features/playingSound";
-import { renderInteractions } from "../../screens/InfoScreenTrack";
+import {
+  playTrack,
+  stopTrack,
+  renderInteractions,
+} from "../../screens/InfoScreenTrack";
 import { callCheckTrackSaveStatus } from "../../client/spotifyClient";
 
 const { width } = Dimensions.get("screen");
@@ -81,26 +85,6 @@ const OverflowItems = ({ data, scrollXAnimated }) => {
       </Animated.View>
     </View>
   );
-};
-
-const getSaveStatus = async (id, token) => {
-  return await callCheckTrackSaveStatus(id, token);
-};
-
-export const playTrack = async (link, dispatch) => {
-  const source = { uri: link };
-
-  const { sound } = await Audio.Sound.createAsync(source);
-  dispatch(setPlayingSound(sound));
-
-  await sound.playAsync();
-};
-
-export const stopTrack = async (playingSound, dispatch) => {
-  if (playingSound) {
-    await playingSound.stopAsync();
-    dispatch(setPlayingSound(false));
-  }
 };
 
 const getTrackDetails = (songInfo) => {
