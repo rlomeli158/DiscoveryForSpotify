@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
   // Grid styles: {
   itemContainerInGrid: {
     flexDirection: "column",
-    // marginHorizontal: 5,
     margin: 3,
     maxWidth: screenWidth / 3.25,
     maxHeight: screenWidth / 2,
@@ -172,6 +171,20 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     fontSize: 15,
     fontWeight: "700",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    height: screenWidth / 8,
+  },
+  tab: {
+    width: "50%",
+    borderBottomWidth: 1,
+    justifyContent: "center",
+  },
+  tabText: {
+    fontSize: 15,
+    fontWeight: "500",
+    alignSelf: "center",
   },
   //Carousel Pagination
   dotContainer: {

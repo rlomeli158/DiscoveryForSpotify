@@ -58,26 +58,6 @@ function RootNavigator() {
         component={Recommendations}
         options={{ headerShown: false }}
       />
-      {/* <Stack.Screen
-        name="InfoScreenArtist"
-        component={InfoScreenArtist}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="InfoScreenTrack"
-        component={InfoScreenTrack}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="InfoScreenPlaylist"
-        component={InfoScreenPlaylist}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="InfoScreenAlbum"
-        component={InfoScreenAlbum}
-        options={{ headerShown: false }}
-      /> */}
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -98,11 +78,13 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="InfoScreenArtist"
         component={InfoScreenArtist}
+        getId={({ params }) => params.id}
         options={{ headerShown: false }}
       />
       <HomeStack.Screen
         name="InfoScreenTrack"
         component={InfoScreenTrack}
+        getId={({ params }) => params.id}
         options={{ headerShown: false }}
       />
       <HomeStack.Screen

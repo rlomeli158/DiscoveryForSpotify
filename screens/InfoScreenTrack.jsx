@@ -20,6 +20,7 @@ import CustomColors from "../constants/Colors";
 import * as Progress from "react-native-progress";
 import { loadingIcon, renderImage, renderPopularity } from "./InfoScreenArtist";
 import { setPlayingSound } from "../redux/features/playingSound";
+import { Audio } from "expo-av";
 
 const InfoScreenTrack = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);

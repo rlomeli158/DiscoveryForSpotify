@@ -1,7 +1,7 @@
 import { Text, View } from "../Themed";
 import { getImageUrl } from "../Gallery/Gallery";
 import { getSongInfo } from "../Gallery/Gallery";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, StackActions } from "@react-navigation/native";
 import styles from "../../constants/styles";
 import { Image, FlatList, Pressable } from "react-native";
 import { breakUpArtistArray } from "../Gallery/Gallery";
@@ -32,10 +32,24 @@ const Grid = ({ data }) => {
           return (
             <Pressable
               onPress={() => {
-                navigation.push("InfoScreenTrack", {
-                  type: "track",
-                  id: item.id ? item.id : item.track.id,
-                });
+                if (item.type === "track") {
+                  navigation.navigate("InfoScreenTrack", {
+                    type: "track",
+                    id: item.id ? item.id : item.track.id,
+                  });
+                  // navigation.navigate("HomeScreen", {
+                  //   screen: "InfoScreenTrack",
+                  //   params: {
+                  //     type: "track",
+                  //     id: item.id ? item.id : item.track.id,
+                  //   },
+                  // });
+                } else {
+                  navigation.navigate("InfoScreenArtist", {
+                    type: "artist",
+                    id: item.id,
+                  });
+                }
               }}
             >
               <View style={styles.itemContainerInGrid}>
