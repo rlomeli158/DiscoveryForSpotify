@@ -7,6 +7,8 @@ import { loadingIcon } from "./InfoScreenArtist";
 import { useSelector } from "react-redux";
 import Grid from "../components/Grid/Grid";
 import CustomColors from "../constants/Colors";
+import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const TopScreen = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
@@ -14,30 +16,42 @@ const TopScreen = ({ route, navigation }) => {
   const [tracksTabSelected, setTracksTabSelected] = useState(true);
   const [topTracks, setTopTracks] = useState(false);
   const [topArtists, setTopArtists] = useState(false);
-  const [term, setTerm] = useState("short_term");
+  const possibleTerms = ["short_term", "medium_term", "long_term"];
+  const [termIndex, setTermIndex] = useState(0);
+  const [size, setSize] = useState("small");
 
   useEffect(async () => {
-    setTopArtists(await callGetUsersTop("artists", term, token));
-    setTopTracks(await callGetUsersTop("tracks", term, token));
+    setLoading(true);
+    setTopArtists(
+      await callGetUsersTop("artists", possibleTerms[termIndex], token)
+    );
+    setTopTracks(
+      await callGetUsersTop("tracks", possibleTerms[termIndex], token)
+    );
     setLoading(false);
-  }, []);
+  }, [termIndex]);
 
   return (
     <ScrollView
       style={styles.pageContainer}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      <Text style={[styles.pageHeader, { alignSelf: "center" }]}>
-        Your Top Stuff
-      </Text>
+      {renderTopBar(
+        termIndex,
+        setTermIndex,
+        size,
+        setSize,
+        tracksTabSelected,
+        possibleTerms
+      )}
       {renderTabs(tracksTabSelected, setTracksTabSelected)}
       <View>
         {loading ? (
           loadingIcon()
         ) : tracksTabSelected ? (
-          <Grid data={topTracks} />
+          <Grid data={topTracks} size={size} />
         ) : (
-          <Grid data={topArtists} />
+          <Grid data={topArtists} size={size} />
         )}
       </View>
     </ScrollView>
@@ -103,6 +117,74 @@ const renderTabs = (tracksTabSelected, setTracksTabSelected) => {
           </Text>
         </View>
       </Pressable>
+    </View>
+  );
+};
+
+const renderHeaderText = (tracksTabSelected, possibleTerms, termIndex) => {
+  const currentTerm = possibleTerms[termIndex];
+  let term = "4 weeks";
+  if (currentTerm == "medium_term") {
+    term = "6 months";
+  } else if (currentTerm == "long_term") {
+    term = "All time";
+  }
+
+  return (
+    <View>
+      <Text style={styles.topText}>{`Your Top ${
+        tracksTabSelected ? "Tracks" : "Artists"
+      }`}</Text>
+      <Text style={styles.textTime}>{`${term}`}</Text>
+    </View>
+  );
+};
+
+const renderTopBar = (
+  termIndex,
+  setTermIndex,
+  size,
+  setSize,
+  tracksTabSelected,
+  possibleTerms
+) => {
+  return (
+    <View style={styles.topItemsBar}>
+      <View>
+        <Pressable
+          onPress={() => {
+            if (termIndex < 2) {
+              setTermIndex(termIndex + 1);
+            } else {
+              setTermIndex(0);
+            }
+          }}
+        >
+          <FontAwesome
+            name="calendar-o"
+            size={30}
+            color={CustomColors.dark.primaryColor}
+          />
+        </Pressable>
+      </View>
+      {renderHeaderText(tracksTabSelected, possibleTerms, termIndex)}
+      <View>
+        <Pressable
+          onPress={() => {
+            if (size == "small") {
+              setSize("large");
+            } else {
+              setSize("small");
+            }
+          }}
+        >
+          <Ionicons
+            name="grid-outline"
+            size={30}
+            color={CustomColors.dark.primaryColor}
+          />
+        </Pressable>
+      </View>
     </View>
   );
 };

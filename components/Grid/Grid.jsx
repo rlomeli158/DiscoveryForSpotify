@@ -6,9 +6,11 @@ import styles from "../../constants/styles";
 import { Image, FlatList, Pressable } from "react-native";
 import { breakUpArtistArray } from "../Gallery/Gallery";
 
-const numColumns = 3;
-
-const Grid = ({ data }) => {
+const Grid = ({ data, size }) => {
+  let numColumns = 3;
+  if (size != "small") {
+    numColumns = 2;
+  }
   const navigation = useNavigation();
   return (
     <View>
@@ -16,6 +18,7 @@ const Grid = ({ data }) => {
         showsVerticalScrollIndicator={false}
         data={data}
         numColumns={numColumns}
+        key={numColumns}
         renderItem={({ item }) => {
           if (item.added_at) {
             item = item.track;
@@ -37,13 +40,6 @@ const Grid = ({ data }) => {
                     type: "track",
                     id: item.id ? item.id : item.track.id,
                   });
-                  // navigation.navigate("HomeScreen", {
-                  //   screen: "InfoScreenTrack",
-                  //   params: {
-                  //     type: "track",
-                  //     id: item.id ? item.id : item.track.id,
-                  //   },
-                  // });
                 } else {
                   navigation.navigate("InfoScreenArtist", {
                     type: "artist",
@@ -52,36 +48,57 @@ const Grid = ({ data }) => {
                 }
               }}
             >
-              <View style={styles.itemContainerInGrid}>
+              <View
+                style={
+                  size == "small"
+                    ? styles.itemContainerInGridSmall
+                    : styles.itemContainerInGridLarge
+                }
+              >
                 <Image
-                  style={styles.itemImageInGrid}
+                  style={
+                    size == "small"
+                      ? styles.itemImageInGridSmall
+                      : styles.itemImageInGridLarge
+                  }
                   source={{ uri: imageUrl }}
                 />
-                <View style={styles.itemTextInGrid}>
+                <View>
                   {renderSongInfoGrid(
                     songName,
                     artists,
                     artistName,
-                    playlistName
+                    playlistName,
+                    size
                   )}
                 </View>
               </View>
             </Pressable>
           );
         }}
-        keyExtractor={(item, index) => {
-          return index;
-        }}
       />
     </View>
   );
 };
 
-const renderSongInfoGrid = (songName, artists, artistName, playlistName) => {
+const renderSongInfoGrid = (
+  songName,
+  artists,
+  artistName,
+  playlistName,
+  size
+) => {
   if (artistName || playlistName) {
     const nameToRender = artistName ? artistName : playlistName;
     return (
-      <Text style={styles.artistName} numberOfLines={1}>
+      <Text
+        style={
+          size == "small"
+            ? styles.artistNameInGridSmall
+            : styles.artistNameInGridLarge
+        }
+        numberOfLines={1}
+      >
         {nameToRender}
       </Text>
     );
@@ -91,10 +108,24 @@ const renderSongInfoGrid = (songName, artists, artistName, playlistName) => {
 
   return (
     <>
-      <Text style={styles.songNameInGrid} numberOfLines={1}>
+      <Text
+        style={
+          size == "small"
+            ? styles.songNameInGridSmall
+            : styles.songNameInGridLarge
+        }
+        numberOfLines={1}
+      >
         {songName}
       </Text>
-      <Text style={styles.artistNameWithSongInGrid} numberOfLines={1}>
+      <Text
+        style={
+          size == "small"
+            ? styles.artistNameWithSongInGridSmall
+            : styles.artistNameWithSongInGridLarge
+        }
+        numberOfLines={1}
+      >
         {artistString}
       </Text>
     </>

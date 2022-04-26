@@ -145,33 +145,60 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "700",
   },
-  // Grid styles: {
-  itemContainerInGrid: {
+  // Grid styles:
+  itemContainerInGridSmall: {
     flexDirection: "column",
     margin: 3,
     maxWidth: screenWidth / 3.25,
     maxHeight: screenWidth / 2,
   },
-  itemImageInGrid: {
+  itemImageInGridSmall: {
     resizeMode: "contain",
     width: screenWidth / 3.25,
     height: screenWidth / 3,
   },
-  songNameInGrid: {
+  itemContainerInGridLarge: {
+    flexDirection: "column",
+    margin: 2,
+    maxWidth: screenWidth / 2.15,
+    maxHeight: screenWidth / 1.25,
+  },
+  itemImageInGridLarge: {
+    resizeMode: "contain",
+    width: screenWidth / 2.15,
+    height: screenWidth / 2,
+  },
+  songNameInGridSmall: {
     paddingTop: 6,
     fontSize: 10,
     fontWeight: "700",
   },
-  artistNameWithSongInGrid: {
+  artistNameWithSongInGridSmall: {
     fontSize: 10,
     color: CustomColors.dark.primaryColor,
     fontWeight: "700",
   },
-  artistName: {
+  artistNameInGridSmall: {
+    paddingTop: 10,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  songNameInGridLarge: {
+    paddingTop: 6,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  artistNameWithSongInGridLarge: {
+    fontSize: 13,
+    color: CustomColors.dark.primaryColor,
+    fontWeight: "700",
+  },
+  artistNameInGridLarge: {
     paddingTop: 10,
     fontSize: 15,
     fontWeight: "700",
   },
+  // Tabs in Grid
   tabContainer: {
     flexDirection: "row",
     height: screenWidth / 8,
@@ -185,6 +212,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "500",
     alignSelf: "center",
+  },
+  // Grid text
+  topText: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  textTime: {
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  topItemsBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   //Carousel Pagination
   dotContainer: {
