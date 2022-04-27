@@ -16,7 +16,7 @@ import {
 import CustomColors from "../constants/Colors";
 import OverflowItems from "../components/Carousel/InfoAndPlayer";
 import { useSelector, useDispatch } from "react-redux";
-import { stopTrack } from "../components/Carousel/InfoAndPlayer";
+import { stopTrack } from "./InfoScreenTrack";
 
 const { width } = Dimensions.get("screen");
 const SPACING = 0;
