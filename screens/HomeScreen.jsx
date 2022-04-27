@@ -1,33 +1,28 @@
-import { Button, ScrollView } from "react-native";
+import { Pressable, ScrollView } from "react-native";
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
-import Gallery, { defaultImage } from "../components/Gallery/Gallery";
+import Gallery from "../components/Gallery/Gallery";
 import { useEffect, useState } from "react";
 import {
-  callGetPlaylistInfo,
   callGetPlaylists,
   callGetUsersTop,
   callRecentlyPlayed,
 } from "../client/spotifyClient";
 import { useSelector, useDispatch } from "react-redux";
 import * as WebBrowser from "expo-web-browser";
-import {
-  makeRedirectUri,
-  ResponseType,
-  useAuthRequest,
-} from "expo-auth-session";
 WebBrowser.maybeCompleteAuthSession();
-import { setToken } from "../redux/features/token";
 import VerticalList from "../components/VerticalList/VerticalList";
 import { loadingIcon } from "./InfoScreenArtist";
+import * as SecureStore from "expo-secure-store";
+import { Ionicons } from "@expo/vector-icons";
+import CustomColors from "../constants/Colors";
+import { getTokens } from "../client/authenticationClient";
 
 const name = "Steve";
 
-// Endpoint
-const discovery = {
-  authorizationEndpoint: "https://accounts.spotify.com/authorize",
-  tokenEndpoint: "https://accounts.spotify.com/api/token",
-};
+if (typeof Buffer === "undefined") {
+  global.Buffer = require("buffer").Buffer;
+}
 
 const HomeScreen = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
@@ -39,72 +34,60 @@ const HomeScreen = ({ route, navigation }) => {
   const [playlists, setPlaylists] = useState(false);
   const [tokenReceived, setTokenReceived] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      responseType: ResponseType.Token,
-      clientId: "4f0fe728346848b691b85459ebeadb89",
-      scopes: [
-        "user-read-email",
-        "playlist-modify-public",
-        "playlist-read-private",
-        "playlist-modify-private",
-        "playlist-read-collaborative",
-        "user-read-recently-played",
-        "user-top-read",
-        "user-library-read",
-        "user-library-modify",
-      ],
-      // In order to follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
-      // this must be set to false
-      usePKCE: false,
-      redirectUri: makeRedirectUri({
-        scheme: "myapp",
-        preferLocalhost: true,
-        isTripleSlashed: true,
-      }),
-    },
-    discovery
-  );
+  const [signedOut, setSignedOut] = useState(false);
 
   useEffect(async () => {
-    if (!token && request) {
-      promptAsync();
-    }
-  }, [request]);
-
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { access_token } = response.params;
-      dispatch(setToken(access_token));
-      setTokenReceived(true);
-    }
-  }, [response]);
+    await getTokens(setTokenReceived, dispatch);
+  }, []);
 
   useEffect(async () => {
     setTopArtists(await callGetUsersTop("artists", "short_term", token));
     setTopTracks(await callGetUsersTop("tracks", "short_term", token));
     setRecentlyPlayed(await callRecentlyPlayed(token));
     setPlaylists(await callGetPlaylists(token));
+    setLoading(false);
   }, [tokenReceived]);
-
-  useEffect(() => {
-    if (playlists) {
-      setLoading(false);
-    }
-  }, [playlists]);
 
   return (
     <ScrollView
       style={[styles.pageContainer]}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      {loading ? (
+      {signedOut ? (
+        <Pressable
+          onPress={async () => {
+            await getTokens(setTokenReceived, dispatch);
+            setSignedOut(false);
+          }}
+        >
+          <Ionicons
+            name="enter-outline"
+            size={30}
+            color={CustomColors.dark.primaryColor}
+          />
+        </Pressable>
+      ) : loading ? (
         loadingIcon()
       ) : (
         <>
-          <View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
             <Text style={styles.pageHeader}>Welcome back, {name}</Text>
+            <Pressable
+              onPress={() => {
+                SecureStore.setItemAsync("ACCESS_TOKEN", "");
+                SecureStore.setItemAsync("REFRESH_TOKEN", "");
+                SecureStore.setItemAsync("EXPIRATION_TIME", "");
+                setSignedOut(true);
+              }}
+            >
+              <Ionicons
+                name="exit-outline"
+                size={30}
+                color={CustomColors.dark.primaryColor}
+              />
+            </Pressable>
           </View>
           <View>
             <Gallery title="Your Top Artists" data={topArtists} />
