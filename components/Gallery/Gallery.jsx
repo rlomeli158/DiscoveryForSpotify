@@ -88,8 +88,12 @@ export const renderSongInfo = (songName, artists, artistName, playlistName) => {
 
   return (
     <>
-      <Text style={styles.songName}>{songName}</Text>
-      <Text style={styles.artistNameWithSong}>{artistString}</Text>
+      <Text style={styles.songName} numberOfLines={2}>
+        {songName}
+      </Text>
+      <Text style={styles.artistNameWithSong} numberOfLines={2}>
+        {artistString}
+      </Text>
     </>
   );
 };

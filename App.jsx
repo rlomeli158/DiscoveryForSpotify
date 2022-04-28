@@ -5,11 +5,17 @@ import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "./navigation";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import { useFonts } from "expo-font";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
 
-  if (!isLoadingComplete) {
+  let [fontsLoaded] = useFonts({
+    Poppins: require("./assets/fonts/Poppins-Regular.ttf"),
+    PoppinsBold: require("./assets/fonts/Poppins-SemiBold.ttf"),
+  });
+
+  if (!isLoadingComplete || !fontsLoaded) {
     return null;
   } else {
     return (

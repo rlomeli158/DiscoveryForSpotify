@@ -408,8 +408,6 @@ export const callGetMultipleTracksFeatures = async (trackIds, token) => {
       valence: valence,
     };
 
-    console.log(cleanedAudioFeatures);
-
     return cleanedAudioFeatures;
   } catch (err) {
     console.log(err);

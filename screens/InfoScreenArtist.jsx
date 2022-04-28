@@ -175,13 +175,13 @@ export const renderPopularity = (
 };
 
 const renderGenres = (genreList) => {
+  console.log("Rending genres..", genreList);
   return (
     <View>
       <Text style={styles.pageSubHeader}>Genres</Text>
       <FlatList
         showsHorizontalScrollIndicator={false}
         horizontal={true}
-        style={{ flex: 1, width: "100%" }}
         data={genreList}
         renderItem={({ item, index }) => {
           return (

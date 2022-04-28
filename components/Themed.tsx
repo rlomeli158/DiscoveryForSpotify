@@ -37,7 +37,14 @@ export function Text(props: TextProps) {
   );
   const fontWeight = "600";
 
-  return <DefaultText style={[{ color, fontWeight }, style]} {...otherProps} />;
+  const fontFamily = "PoppinsBold";
+
+  return (
+    <DefaultText
+      style={[{ color, fontWeight, fontFamily }, style]}
+      {...otherProps}
+    />
+  );
 }
 
 export function View(props: ViewProps) {

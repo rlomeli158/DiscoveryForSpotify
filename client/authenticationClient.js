@@ -81,7 +81,7 @@ export const getTokens = async (setTokenReceived, dispatch) => {
 
   if (existingToken) {
     if (new Date().getTime() > existingExpiration) {
-      await refreshTokens();
+      await refreshTokens(setTokenReceived, dispatch);
     } else {
       console.log("Found a valid token!");
       console.log(

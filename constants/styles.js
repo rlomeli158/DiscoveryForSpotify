@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   galleryList: {
     flex: 1,
     width: "100%",
-    marginHorizontal: 5,
+    marginHorizontal: -5,
   },
   galleryView: {
     marginHorizontal: 10,
@@ -148,52 +148,62 @@ const styles = StyleSheet.create({
   // Grid styles:
   itemContainerInGridSmall: {
     flexDirection: "column",
-    margin: 3,
+    marginHorizontal: 3,
+    marginVertical: 2,
     maxWidth: screenWidth / 3.25,
     maxHeight: screenWidth / 2,
   },
   itemImageInGridSmall: {
     resizeMode: "contain",
     width: screenWidth / 3.25,
-    height: screenWidth / 3,
+    height: screenWidth / 3.25,
+    borderRadius: 20,
   },
   itemContainerInGridLarge: {
     flexDirection: "column",
-    margin: 2,
+    marginHorizontal: 2,
+    marginVertical: 5,
     maxWidth: screenWidth / 2.15,
-    maxHeight: screenWidth / 1.25,
+    maxHeight: screenWidth,
   },
   itemImageInGridLarge: {
     resizeMode: "contain",
     width: screenWidth / 2.15,
-    height: screenWidth / 2,
+    height: screenWidth / 2.15,
+    borderRadius: 25,
   },
   songNameInGridSmall: {
+    marginHorizontal: 5,
     paddingTop: 6,
     fontSize: 10,
     fontWeight: "700",
   },
   artistNameWithSongInGridSmall: {
+    marginHorizontal: 5,
     fontSize: 10,
     color: CustomColors.dark.primaryColor,
     fontWeight: "700",
   },
   artistNameInGridSmall: {
-    paddingTop: 10,
+    marginHorizontal: 5,
+    paddingTop: 5,
     fontSize: 13,
     fontWeight: "700",
   },
   songNameInGridLarge: {
+    marginHorizontal: 5,
     paddingTop: 6,
     fontSize: 13,
     fontWeight: "700",
   },
   artistNameWithSongInGridLarge: {
+    marginHorizontal: 5,
     fontSize: 13,
     color: CustomColors.dark.primaryColor,
     fontWeight: "700",
   },
   artistNameInGridLarge: {
+    marginHorizontal: 5,
     paddingTop: 10,
     fontSize: 15,
     fontWeight: "700",
