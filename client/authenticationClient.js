@@ -49,6 +49,7 @@ export const getAuthorizationCode = async () => {
   let result;
   try {
     const scopesArr = [
+      "user-read-private",
       "user-read-email",
       "playlist-modify-public",
       "playlist-read-private",

@@ -4,6 +4,7 @@ import styles from "../constants/styles";
 import Gallery from "../components/Gallery/Gallery";
 import { useEffect, useState } from "react";
 import {
+  callGetCurrentUser,
   callGetPlaylists,
   callGetUsersTop,
   callRecentlyPlayed,
@@ -17,6 +18,7 @@ import * as SecureStore from "expo-secure-store";
 import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
 import { getTokens } from "../client/authenticationClient";
+import { setCurrentUser } from "../redux/features/currentUser";
 
 const name = "Steve";
 
@@ -45,6 +47,7 @@ const HomeScreen = ({ route, navigation }) => {
     setTopTracks(await callGetUsersTop("tracks", "short_term", token));
     setRecentlyPlayed(await callRecentlyPlayed(token));
     setPlaylists(await callGetPlaylists(token));
+    dispatch(setCurrentUser(await callGetCurrentUser(token)));
     setLoading(false);
   }, [tokenReceived]);
 

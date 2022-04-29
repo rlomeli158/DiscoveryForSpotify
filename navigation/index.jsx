@@ -25,6 +25,7 @@ import CustomColors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import TopScreen from "../screens/TopScreen";
+import CommentTray from "../components/Comment/CommentTray";
 
 export default function Navigation({ colorScheme }) {
   return (
@@ -69,35 +70,37 @@ const HomeStack = createNativeStackNavigator();
 
 function HomeStackScreen() {
   return (
-    <HomeStack.Navigator initialRouteName="Home">
-      <HomeStack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ headerShown: false }}
-      />
-      <HomeStack.Screen
-        name="InfoScreenArtist"
-        component={InfoScreenArtist}
-        getId={({ params }) => params.id}
-        options={{ headerShown: false }}
-      />
-      <HomeStack.Screen
-        name="InfoScreenTrack"
-        component={InfoScreenTrack}
-        getId={({ params }) => params.id}
-        options={{ headerShown: false }}
-      />
-      <HomeStack.Screen
-        name="InfoScreenPlaylist"
-        component={InfoScreenPlaylist}
-        options={{ headerShown: false }}
-      />
-      <HomeStack.Screen
-        name="InfoScreenAlbum"
-        component={InfoScreenAlbum}
-        options={{ headerShown: false }}
-      />
-    </HomeStack.Navigator>
+    <>
+      <HomeStack.Navigator initialRouteName="Home">
+        <HomeStack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen
+          name="InfoScreenArtist"
+          component={InfoScreenArtist}
+          getId={({ params }) => params.id}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen
+          name="InfoScreenTrack"
+          component={InfoScreenTrack}
+          getId={({ params }) => params.id}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen
+          name="InfoScreenPlaylist"
+          component={InfoScreenPlaylist}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen
+          name="InfoScreenAlbum"
+          component={InfoScreenAlbum}
+          options={{ headerShown: false }}
+        />
+      </HomeStack.Navigator>
+    </>
   );
 }
 
@@ -125,58 +128,61 @@ function BottomTabNavigator() {
   const colorScheme = useColorScheme();
 
   return (
-    <BottomTab.Navigator
-      initialRouteName="HomeScreen"
-      screenOptions={{
-        tabBarActiveTintColor: CustomColors.dark.primaryColor,
-        tabBarInactiveTintColor: "#FFF",
-      }}
-    >
-      <BottomTab.Screen
-        name="HomeScreen"
-        component={HomeStackScreen}
-        options={({ navigation }) => ({
-          title: "Home",
-          headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        })}
-      />
-      <BottomTab.Screen
-        name="Discover"
-        component={Discover}
-        options={({ navigation }) => ({
-          title: "Discover",
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons
-              name="saved-search"
-              size={30}
-              style={{ marginBottom: -3 }}
-              color={color}
-            />
-          ),
-        })}
-      />
-      <BottomTab.Screen
-        name="TopScreen"
-        component={TopStackScreen}
-        options={({ route, navigation }) => ({
-          title: "Top",
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Feather name="trending-up" size={30} color={color} />
-          ),
-        })}
-      />
-      <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
-        options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+    <>
+      <BottomTab.Navigator
+        initialRouteName="HomeScreen"
+        screenOptions={{
+          tabBarActiveTintColor: CustomColors.dark.primaryColor,
+          tabBarInactiveTintColor: "#FFF",
         }}
-      />
-    </BottomTab.Navigator>
+      >
+        <BottomTab.Screen
+          name="HomeScreen"
+          component={HomeStackScreen}
+          options={({ navigation }) => ({
+            title: "Home",
+            headerShown: false,
+            tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          })}
+        />
+        <BottomTab.Screen
+          name="Discover"
+          component={Discover}
+          options={({ navigation }) => ({
+            title: "Discover",
+            headerShown: false,
+            tabBarIcon: ({ color }) => (
+              <MaterialIcons
+                name="saved-search"
+                size={30}
+                style={{ marginBottom: -3 }}
+                color={color}
+              />
+            ),
+          })}
+        />
+        <BottomTab.Screen
+          name="TopScreen"
+          component={TopStackScreen}
+          options={({ route, navigation }) => ({
+            title: "Top",
+            headerShown: false,
+            tabBarIcon: ({ color }) => (
+              <Feather name="trending-up" size={30} color={color} />
+            ),
+          })}
+        />
+        <BottomTab.Screen
+          name="TabTwo"
+          component={TabTwoScreen}
+          options={{
+            title: "Tab Two",
+            tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          }}
+        />
+      </BottomTab.Navigator>
+      <CommentTray />
+    </>
   );
 }
 

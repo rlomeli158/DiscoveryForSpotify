@@ -21,6 +21,7 @@ import * as Progress from "react-native-progress";
 import { loadingIcon, renderImage, renderPopularity } from "./InfoScreenArtist";
 import { setPlayingSound } from "../redux/features/playingSound";
 import { Audio } from "expo-av";
+import { openTray } from "../redux/features/commentsTray";
 
 const InfoScreenTrack = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
@@ -170,12 +171,18 @@ export const renderInteractions = (
         })
       }
     >
-      <FontAwesome
-        style={{ marginHorizontal: 10 }}
-        name="comment-o"
-        size={35}
-        color="white"
-      />
+      <Pressable
+        onPress={() => {
+          dispatch(openTray(track));
+        }}
+      >
+        <FontAwesome
+          style={{ marginHorizontal: 10 }}
+          name="comment-o"
+          size={35}
+          color="white"
+        />
+      </Pressable>
       {track.preview_url ? (
         playingSound ? (
           <Pressable

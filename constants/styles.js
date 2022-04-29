@@ -357,5 +357,45 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     flex: 1,
   },
+  // Comments section
+  // Comment box
+  commentContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  commentAreaContainer: {
+    padding: 15,
+    flexDirection: "row",
+  },
+  commentInput: {
+    flex: 1,
+    borderRadius: 4,
+    backgroundColor: "lightgrey",
+    marginHorizontal: 10,
+    paddingHorizontal: 10,
+  },
+  commentProfilePic: {
+    height: 32,
+    width: 32,
+    borderRadius: 16,
+  },
+  // Individual comment
+  individualCommentContainer: {
+    flex: 1,
+    padding: 10,
+    flexDirection: "row",
+  },
+  commentTextContainer: {
+    marginHorizontal: 10,
+  },
+  commentDisplayName: {
+    fontSize: 10,
+    color: CustomColors.dark.primaryColor,
+    fontFamily: "PoppinsBold",
+  },
+  comment: {
+    fontSize: 14,
+    fontFamily: "Poppins",
+  },
 });
 export default styles;

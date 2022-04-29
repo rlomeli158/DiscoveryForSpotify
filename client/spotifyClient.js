@@ -413,3 +413,40 @@ export const callGetMultipleTracksFeatures = async (trackIds, token) => {
     console.log(err);
   }
 };
+
+export const callGetCurrentUser = async (token) => {
+  let spotifyUrl = "https://api.spotify.com/v1/me";
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let currentUserInfo = await spotifyResponse.json();
+
+    return currentUserInfo;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetUserInfo = async (userId, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/users/${userId}`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let currentUserInfo = await spotifyResponse.json();
+
+    return currentUserInfo;
+  } catch (err) {
+    console.log(err);
+  }
+};

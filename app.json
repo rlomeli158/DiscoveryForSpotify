@@ -28,7 +28,18 @@
       }
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "config": {
+        "firebase" : {
+          "apiKey": "AIzaSyCNr9SNkIUEbpYGMtRUXvtyNlhbXqxIz3A",
+          "authDomain": "discovery-for-spotify.firebaseapp.com",
+          "projectId": "discovery-for-spotify",
+          "storageBucket": "discovery-for-spotify.appspot.com",
+          "messagingSenderId": "525653513989",
+          "appId": "1:525653513989:web:b897134ed1421a5c02096c",
+          "measurementId": "G-SV3K0BQTPW"
+        }
+      }
     }
   }
 }
