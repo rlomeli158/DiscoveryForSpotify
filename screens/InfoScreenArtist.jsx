@@ -175,7 +175,6 @@ export const renderPopularity = (
 };
 
 const renderGenres = (genreList) => {
-  console.log("Rending genres..", genreList);
   return (
     <View>
       <Text style={styles.pageSubHeader}>Genres</Text>

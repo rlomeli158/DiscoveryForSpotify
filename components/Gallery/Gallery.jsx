@@ -78,7 +78,7 @@ export const renderSongInfo = (songName, artists, artistName, playlistName) => {
   if (artistName || playlistName) {
     const nameToRender = artistName ? artistName : playlistName;
     return (
-      <Text style={styles.artistName} numberOfLines={2}>
+      <Text style={styles.artistName} numberOfLines={1}>
         {nameToRender}
       </Text>
     );
@@ -88,10 +88,10 @@ export const renderSongInfo = (songName, artists, artistName, playlistName) => {
 
   return (
     <>
-      <Text style={styles.songName} numberOfLines={2}>
+      <Text style={styles.songName} numberOfLines={1}>
         {songName}
       </Text>
-      <Text style={styles.artistNameWithSong} numberOfLines={2}>
+      <Text style={styles.artistNameWithSong} numberOfLines={1}>
         {artistString}
       </Text>
     </>

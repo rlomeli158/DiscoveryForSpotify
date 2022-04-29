@@ -6,8 +6,9 @@ import {
   Animated,
   StyleSheet,
   SafeAreaView,
+  Pressable,
 } from "react-native";
-import { Text, View } from "../components/Themed";
+import { View } from "../components/Themed";
 import {
   FlingGestureHandler,
   Directions,
@@ -16,7 +17,9 @@ import {
 import CustomColors from "../constants/Colors";
 import OverflowItems from "../components/Carousel/InfoAndPlayer";
 import { useSelector, useDispatch } from "react-redux";
-import { stopTrack } from "./InfoScreenTrack";
+import { playTrack, stopTrack } from "./InfoScreenTrack";
+import { Ionicons } from "@expo/vector-icons";
+import { callGetRecommendationsApi } from "../client/spotifyClient";
 
 const { width } = Dimensions.get("screen");
 const SPACING = 0;
@@ -25,15 +28,31 @@ const ITEM_HEIGHT = ITEM_WIDTH * 1.7;
 const VISIBLE_ITEMS = 3;
 
 const Recommendations = ({ route, navigation }) => {
+  const token = useSelector((state) => state.token.value);
   const playingSound = useSelector((state) => state.playingSound.value);
   const dispatch = useDispatch();
+  const { recommendedTracks, selectedItems, currentIndex } = route.params;
 
   const scrollXIndex = useRef(new Animated.Value(0)).current;
   const scrollXAnimated = useRef(new Animated.Value(0)).current;
   const [index, setIndex] = useState(0);
+  const [reset, setReset] = useState(false);
   const setActiveIndex = useCallback((activeIndex) => {
     scrollXIndex.setValue(activeIndex);
     setIndex(activeIndex);
+  });
+
+  useEffect(() => {
+    console.log("Current Index:", currentIndex, "reset:", reset);
+    if (currentIndex == 0 && !reset) {
+      Animated.spring(scrollXAnimated, {
+        toValue: 0,
+        useNativeDriver: true,
+      }).start();
+      setIndex(0);
+      setActiveIndex(0);
+      setReset(true);
+    }
   });
 
   useEffect(() => {
@@ -43,11 +62,34 @@ const Recommendations = ({ route, navigation }) => {
     }).start();
   });
 
+  // useEffect(() => {
+  //   console.log("RESETTING ?", resetActiveIndex);
+  //   if (resetActiveIndex[0] == true) {
+  //     setActiveIndex(0);
+  //   }
+  // }, []);
+
   useEffect(() => {
-    stopTrack(playingSound, dispatch);
+    if (playingSound) {
+      stopTrack(playingSound, dispatch);
+      if (recommendedTracks[index].preview_url) {
+        playTrack(recommendedTracks[index].preview_url, dispatch);
+      }
+    } else if (recommendedTracks[index].preview_url) {
+      playTrack(recommendedTracks[index].preview_url, dispatch);
+    }
   }, [index]);
 
-  const { recommendedTracks } = route.params;
+  // useEffect(async () => {
+  //   await navigation.addListener("beforeRemove", async () => {
+  //     if (playingSound != false) {
+  //       console.log("Sound is playing! Trying to stop...");
+  //       stopTrack(playingSound, dispatch);
+  //       console.log("Should have stopped");
+  //     }
+  //   });
+  // }, [navigation, playingSound]);
+
   return (
     <FlingGestureHandler
       key="left"
@@ -74,6 +116,49 @@ const Recommendations = ({ route, navigation }) => {
         }}
       >
         <SafeAreaView style={styles.container}>
+          <View
+            style={{
+              marginLeft: 20,
+              marginRight: 20,
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <Pressable
+              onPress={() => {
+                if (playingSound) {
+                  stopTrack(playingSound, dispatch);
+                }
+                navigation.goBack();
+              }}
+            >
+              <Ionicons
+                name="chevron-back-circle-outline"
+                size={50}
+                color="#FFF"
+              />
+            </Pressable>
+            <Pressable
+              onPress={async () => {
+                const recommendedTracks = await callGetRecommendationsApi(
+                  selectedItems,
+                  10,
+                  token
+                );
+                if (playingSound) {
+                  stopTrack(playingSound, dispatch);
+                }
+                setReset(false);
+                navigation.navigate("Recommendations", {
+                  recommendedTracks: recommendedTracks,
+                  selectedItems: selectedItems,
+                  currentIndex: 0,
+                });
+              }}
+            >
+              <Ionicons name="refresh-circle-outline" size={50} color="#FFF" />
+            </Pressable>
+          </View>
           <FlatList
             data={recommendedTracks}
             keyExtractor={(_, index) => String(index)}
@@ -83,7 +168,7 @@ const Recommendations = ({ route, navigation }) => {
               flex: 1,
               justifyContent: "center",
               padding: SPACING * 2,
-              marginTop: 50,
+              marginTop: 30,
             }}
             scrollEnabled={false}
             removeClippedSubviews={false}

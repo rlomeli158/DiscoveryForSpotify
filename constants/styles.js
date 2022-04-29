@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     marginHorizontal: -5,
   },
   galleryView: {
-    marginHorizontal: 10,
+    marginHorizontal: 5,
     flex: 1,
   },
   galleryImage: {
@@ -72,12 +72,12 @@ const styles = StyleSheet.create({
   },
   // Vertical List
   songContainer: {
-    borderRadius: 20,
+    borderRadius: 14,
+    overflow: "hidden",
     backgroundColor: "#696969",
-    padding: 10,
-    margin: 5,
-    width: "98%",
-    height: screenWidth / 4,
+    marginVertical: 5,
+    width: "100%",
+    height: screenWidth / 5,
     flexDirection: "row",
   },
   listImage: {
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
   },
   listText: {
     flex: 1,
-    width: screenWidth / 2.2,
     backgroundColor: "#696969",
     justifyContent: "center",
     marginLeft: 10,
@@ -258,7 +257,7 @@ const styles = StyleSheet.create({
   //Carousel artist name styles
   artistName: {
     paddingTop: 10,
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "700",
   },
   artistNameWithSong: {
@@ -268,7 +267,7 @@ const styles = StyleSheet.create({
   },
   songName: {
     paddingTop: 10,
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "700",
   },
   //Genre listings

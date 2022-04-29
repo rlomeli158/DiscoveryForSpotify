@@ -131,7 +131,7 @@ const callGetRecommendations = async (
     clearState(stateSetters);
     navigation.navigate("Recommendations", {
       recommendedTracks: recommendedTracks,
-      currentIndex: 0,
+      selectedItems: selectedItems,
     });
   } catch (err) {
     console.log(err);
