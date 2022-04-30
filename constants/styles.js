@@ -386,7 +386,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   commentTextContainer: {
+    flex: 1,
     marginHorizontal: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   commentDisplayName: {
     fontSize: 10,

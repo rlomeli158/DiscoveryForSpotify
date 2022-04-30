@@ -34,7 +34,7 @@ const Comment = () => {
   }, []);
 
   const renderItem = ({ item }) => {
-    return <CommentItem item={item} />;
+    return <CommentItem item={item} track={trackToCommentOn} />;
   };
 
   return (

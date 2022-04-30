@@ -2,11 +2,14 @@ import { getApps } from "firebase/app";
 import {
   getFirestore,
   collection,
+  doc,
   addDoc,
   Timestamp,
   orderBy,
   query,
   onSnapshot,
+  updateDoc,
+  increment,
 } from "firebase/firestore";
 
 let commentListenerInstance = null;
@@ -16,7 +19,8 @@ export const getComments = async (trackId, setCommentList) => {
   try {
     const commentsQuery = query(
       collection(db, "track", trackId, "comments"),
-      orderBy("timestamp", "desc")
+      orderBy("likes", "desc")
+      // orderBy("timestamp", "desc")
     );
 
     commentListenerInstance = onSnapshot(commentsQuery, (comments) => {
@@ -48,8 +52,22 @@ export const putComment = async (userId, trackId, comment) => {
       creator: userId,
       comment: comment,
       timestamp: Timestamp.now(),
+      likes: 1,
     });
   } catch (e) {
     console.error("Error adding document: ", e);
+  }
+};
+
+export const likeComment = async (trackId, commentId) => {
+  const db = getFirestore(getApps()[0]);
+  const updateRef = doc(db, "track", trackId, "comments", commentId);
+
+  try {
+    await updateDoc(updateRef, {
+      likes: increment(1),
+    });
+  } catch (e) {
+    console.log(e);
   }
 };
