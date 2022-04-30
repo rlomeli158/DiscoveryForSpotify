@@ -7,9 +7,13 @@ import {
   Timestamp,
   orderBy,
   query,
+  getDoc,
   onSnapshot,
   updateDoc,
   increment,
+  decrement,
+  getDocs,
+  deleteDoc,
 } from "firebase/firestore";
 
 let commentListenerInstance = null;
@@ -19,7 +23,7 @@ export const getComments = async (trackId, setCommentList) => {
   try {
     const commentsQuery = query(
       collection(db, "track", trackId, "comments"),
-      orderBy("likes", "desc")
+      orderBy("countOfLikes", "desc")
       // orderBy("timestamp", "desc")
     );
 
@@ -52,22 +56,67 @@ export const putComment = async (userId, trackId, comment) => {
       creator: userId,
       comment: comment,
       timestamp: Timestamp.now(),
-      likes: 1,
+      countOfLikes: 0,
     });
   } catch (e) {
     console.error("Error adding document: ", e);
   }
 };
 
-export const likeComment = async (trackId, commentId) => {
+export const likeComment = async (trackId, commentId, userId) => {
   const db = getFirestore(getApps()[0]);
   const updateRef = doc(db, "track", trackId, "comments", commentId);
 
   try {
     await updateDoc(updateRef, {
-      likes: increment(1),
+      countOfLikes: increment(1),
     });
+
+    await addDoc(
+      collection(db, "track", trackId, "comments", commentId, "likers"),
+      {
+        liker: userId,
+      }
+    );
   } catch (e) {
     console.log(e);
+  }
+};
+
+export const unlikeComment = async (trackId, commentId, likeId) => {
+  const db = getFirestore(getApps()[0]);
+  const updateRef = doc(db, "track", trackId, "comments", commentId);
+
+  try {
+    await updateDoc(updateRef, {
+      countOfLikes: increment(-1),
+    });
+
+    await deleteDoc(
+      doc(db, "track", trackId, "comments", commentId, "likers", likeId)
+    );
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+export const checkLikeStatus = async (trackId, commentId, userId) => {
+  const db = getFirestore(getApps()[0]);
+
+  try {
+    let found = false;
+    const allLikers = await getDocs(
+      collection(db, "track", trackId, "comments", commentId, "likers")
+    );
+
+    allLikers.forEach((doc) => {
+      if (doc.data()["liker"] === userId) {
+        found = doc.id;
+      }
+    });
+
+    return found;
+  } catch (err) {
+    console.log(err.message);
   }
 };
