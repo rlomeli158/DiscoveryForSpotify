@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   View,
@@ -14,6 +14,7 @@ import {
   clearCommentListener,
   getComments,
   putComment,
+  replyToComment,
 } from "../../client/firestoreApi";
 import CustomColors from "../../constants/Colors";
 import styles from "../../constants/styles";
@@ -25,8 +26,11 @@ const { width: screenWidth } = Dimensions.get("window");
 const Comment = () => {
   const [comment, setComment] = useState("");
   const [commentList, setCommentList] = useState([]);
+  const [inputPlaceholder, setInputPlaceholder] = useState("Add a comment...");
+  const [commentReplyingTo, setCommentReplyingTo] = useState();
   const currentUser = useSelector((state) => state.currentUser.user);
   const trackToCommentOn = useSelector((state) => state.commentsTray.data);
+  let textInputRef = useRef();
 
   useEffect(() => {
     getComments(trackToCommentOn.id, setCommentList);
@@ -34,7 +38,15 @@ const Comment = () => {
   }, []);
 
   const renderItem = ({ item }) => {
-    return <CommentItem item={item} track={trackToCommentOn} />;
+    return (
+      <CommentItem
+        item={item}
+        track={trackToCommentOn}
+        textInputRef={textInputRef}
+        setPlaceholder={setInputPlaceholder}
+        setCommentReplyingTo={setCommentReplyingTo}
+      />
+    );
   };
 
   return (
@@ -59,11 +71,31 @@ const Comment = () => {
           }}
           value={comment}
           style={styles.commentInput}
+          ref={textInputRef}
+          placeholder={inputPlaceholder}
+          placeholderTextColor={CustomColors.dark.background}
+          onBlur={() => {
+            setInputPlaceholder("Add a comment...");
+          }}
         />
         <Pressable
           onPress={async () => {
-            await putComment(currentUser.id, trackToCommentOn.id, comment);
+            if (inputPlaceholder.includes("Reply")) {
+              console.log(
+                `Submitting reply ${comment} for ${commentReplyingTo}`
+              );
+              await replyToComment(
+                currentUser.id,
+                trackToCommentOn.id,
+                commentReplyingTo,
+                comment
+              );
+            } else {
+              console.log("submitting a normal comment", inputPlaceholder);
+              await putComment(currentUser.id, trackToCommentOn.id, comment);
+            }
             setComment("");
+            textInputRef.current.blur();
           }}
         >
           <Ionicons

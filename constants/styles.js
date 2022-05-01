@@ -379,11 +379,22 @@ const styles = StyleSheet.create({
     width: 32,
     borderRadius: 16,
   },
+  replyProfilePic: {
+    height: 24,
+    width: 24,
+    borderRadius: 16,
+  },
   // Individual comment
   individualCommentContainer: {
     flex: 1,
     padding: 10,
     flexDirection: "row",
+  },
+  individualReplyContainer: {
+    flex: 1,
+    padding: 10,
+    flexDirection: "row",
+    marginLeft: 50,
   },
   commentTextContainer: {
     flex: 1,
@@ -395,6 +406,16 @@ const styles = StyleSheet.create({
   commentDisplayName: {
     fontSize: 10,
     color: CustomColors.dark.primaryColor,
+    fontFamily: "PoppinsBold",
+  },
+  replyText: {
+    fontSize: 10,
+    color: CustomColors.dark.primaryColor,
+    fontFamily: "PoppinsBold",
+  },
+  deleteText: {
+    fontSize: 10,
+    color: CustomColors.dark.formBackground,
     fontFamily: "PoppinsBold",
   },
   comment: {
