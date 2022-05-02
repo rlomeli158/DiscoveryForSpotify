@@ -2,16 +2,61 @@ import { FlatList, Image, Pressable } from "react-native";
 import { View, Text } from "../Themed";
 import styles from "../../constants/styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { addItem } from "../../redux/features/selectedItems";
+import { AntDesign } from "@expo/vector-icons";
+import CustomColors from "../../constants/Colors";
 
 export const defaultImage =
   "https://images.unsplash.com/photo-1565656898731-61d5df85f9a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTV8fG11c2ljfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60";
 
-const Gallery = ({ title, data }) => {
+const Gallery = ({ title, data, selectedItems, isTop }) => {
+  const newSelectedItems = useSelector((state) => state.selectedItems.items);
+  const dispatch = useDispatch();
+
   const navigation = useNavigation();
-  const route = useRoute();
+
   return (
     <View style={{ flex: 1 }}>
-      <Text style={styles.pageSubHeader}>{title}</Text>
+      <View
+        style={{
+          marginRight: 10,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text style={styles.pageSubHeader}>{title}</Text>
+        {isTop ? (
+          <Pressable
+            style={{ justifyContent: "center" }}
+            onPress={() => {
+              if (title.includes("Songs")) {
+                navigation.navigate("Root", {
+                  screen: "TopScreen",
+                  params: {
+                    screen: "Top",
+                    params: {
+                      tab: "tracks",
+                    },
+                  },
+                });
+              } else {
+                navigation.navigate("Root", {
+                  screen: "TopScreen",
+                  params: {
+                    screen: "Top",
+                    params: {
+                      tab: "artists",
+                    },
+                  },
+                });
+              }
+            }}
+          >
+            <AntDesign name="rightcircleo" size={24} color="#FFF" />
+          </Pressable>
+        ) : null}
+      </View>
       <FlatList
         horizontal={true}
         style={styles.galleryList}
@@ -31,7 +76,14 @@ const Gallery = ({ title, data }) => {
           return (
             <Pressable
               onPress={() => {
-                if (item.type == "album") {
+                if (selectedItems) {
+                  if (
+                    !newSelectedItems.includes(item) &&
+                    newSelectedItems.length < 5
+                  ) {
+                    dispatch(addItem(item));
+                  }
+                } else if (item.type == "album") {
                   navigation.push("InfoScreenAlbum", {
                     id: item.id,
                   });

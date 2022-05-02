@@ -80,18 +80,14 @@ const Comment = () => {
         />
         <Pressable
           onPress={async () => {
-            if (inputPlaceholder.includes("Reply")) {
-              console.log(
-                `Submitting reply ${comment} for ${commentReplyingTo}`
-              );
+            if (inputPlaceholder.includes("Reply") && comment != "") {
               await replyToComment(
                 currentUser.id,
                 trackToCommentOn.id,
                 commentReplyingTo,
                 comment
               );
-            } else {
-              console.log("submitting a normal comment", inputPlaceholder);
+            } else if (comment != "") {
               await putComment(currentUser.id, trackToCommentOn.id, comment);
             }
             setComment("");

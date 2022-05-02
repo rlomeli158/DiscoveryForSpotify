@@ -19,13 +19,8 @@ import {
 } from "../../screens/InfoScreenTrack";
 import { callCheckTrackSaveStatus } from "../../client/spotifyClient";
 
-const { width } = Dimensions.get("screen");
-
-const OVERFLOW_HEIGHT = 180;
+const OVERFLOW_HEIGHT = 190;
 const SPACING = 10;
-const ITEM_WIDTH = width * 0.76;
-const ITEM_HEIGHT = ITEM_WIDTH * 1.7;
-const VISIBLE_ITEMS = 3;
 
 const OverflowItems = ({ data, scrollXAnimated }) => {
   const token = useSelector((state) => state.token.value);

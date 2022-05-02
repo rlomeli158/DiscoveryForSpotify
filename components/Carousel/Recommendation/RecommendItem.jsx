@@ -3,8 +3,12 @@ import { ParallaxImage } from "react-native-snap-carousel";
 import { Pressable, SafeAreaView } from "react-native";
 import { Text, View } from "../../Themed";
 import styles from "../../../constants/styles";
+import { FontAwesome5 } from "@expo/vector-icons";
+import CustomColors from "../../../constants/Colors";
+import { useSelector } from "react-redux";
+import { removeItem } from "../../../redux/features/selectedItems";
 
-function CarouselItem({ item, index }, parallaxProps) {
+const CarouselItem = ({ item, index }, parallaxProps, dispatch) => {
   return (
     <Pressable>
       <SafeAreaView style={styles.carouselItem}>
@@ -26,6 +30,14 @@ function CarouselItem({ item, index }, parallaxProps) {
           style={styles.carouselImage}
           {...parallaxProps} /* pass in the necessary props */
         />
+        <Pressable
+          onPress={() => {
+            dispatch(removeItem(item));
+          }}
+          style={{ position: "absolute", top: 0, left: -15 }}
+        >
+          <FontAwesome5 name="trash" size={50} color="#FFF" />
+        </Pressable>
         {item.artists && item.album ? (
           renderSongInfo(item)
         ) : item.images ? (
@@ -38,7 +50,7 @@ function CarouselItem({ item, index }, parallaxProps) {
       </SafeAreaView>
     </Pressable>
   );
-}
+};
 
 const renderSongInfo = (songInfo) => {
   const songName = songInfo.name;

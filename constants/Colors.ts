@@ -17,6 +17,7 @@ const CustomColors = {
     background: '#313131',
     formBackground: '#848484',
     error: '#ff3333',
+    close: '#EF476F',
     tint: tintColorDark,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,

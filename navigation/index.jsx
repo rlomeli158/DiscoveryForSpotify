@@ -54,11 +54,11 @@ function RootNavigator() {
         component={NotFoundScreen}
         options={{ title: "Oops!" }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Recommendations"
         component={Recommendations}
         options={{ headerShown: false }}
-      />
+      /> */}
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -112,9 +112,29 @@ function TopStackScreen() {
       <TopStack.Screen
         name="Top"
         component={TopScreen}
+        getId={({ params }) => params.id}
         options={{ headerShown: false }}
       />
     </TopStack.Navigator>
+  );
+}
+
+const DiscoverStack = createNativeStackNavigator();
+
+function DiscoverStackScreen() {
+  return (
+    <DiscoverStack.Navigator initialRouteName="Discover">
+      <DiscoverStack.Screen
+        name="Discover"
+        component={Discover}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Recommendations"
+        component={Recommendations}
+        options={{ headerShown: false }}
+      />
+    </DiscoverStack.Navigator>
   );
 }
 
@@ -146,9 +166,9 @@ function BottomTabNavigator() {
           })}
         />
         <BottomTab.Screen
-          name="Discover"
-          component={Discover}
-          options={({ navigation }) => ({
+          name="DiscoverScreen"
+          component={DiscoverStackScreen}
+          options={({ route, navigation }) => ({
             title: "Discover",
             headerShown: false,
             tabBarIcon: ({ color }) => (
@@ -171,14 +191,6 @@ function BottomTabNavigator() {
               <Feather name="trending-up" size={30} color={color} />
             ),
           })}
-        />
-        <BottomTab.Screen
-          name="TabTwo"
-          component={TabTwoScreen}
-          options={{
-            title: "Tab Two",
-            tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          }}
         />
       </BottomTab.Navigator>
       <CommentTray />

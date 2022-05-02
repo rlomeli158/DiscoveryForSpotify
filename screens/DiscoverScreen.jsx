@@ -3,7 +3,7 @@ import SearchField from "../components/Discover/SearchField";
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 
-export default function Discover({ navigation }) {
+const Discover = ({ navigation }) => {
   return (
     <ScrollView
       style={styles.pageContainer}
@@ -13,8 +13,10 @@ export default function Discover({ navigation }) {
         <Text style={styles.pageHeader}>Discover</Text>
       </View>
       <View>
-        <SearchField error="" />
+        <SearchField />
       </View>
     </ScrollView>
   );
-}
+};
+
+export default Discover;

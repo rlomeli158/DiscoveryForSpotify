@@ -3,7 +3,7 @@ import tokenReducer from "./features/token";
 import playingSoundReducer from "./features/playingSound";
 import commentsTrayReducer from "./features/commentsTray";
 import currentUserReducer from "./features/currentUser";
-import databaseReducer from "./features/database";
+import selectedItemsReducer from "./features/selectedItems";
 
 export default configureStore({
   reducer: {
@@ -11,7 +11,7 @@ export default configureStore({
     playingSound: playingSoundReducer,
     commentsTray: commentsTrayReducer,
     currentUser: currentUserReducer,
-    database: databaseReducer,
+    selectedItems: selectedItemsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

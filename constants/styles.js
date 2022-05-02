@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   carouselImageContainer: {
     borderRadius: 10,
-    backgroundColor: "lightblue",
+    backgroundColor: CustomColors.dark.background,
     marginBottom: Platform.select({ ios: 0, android: 1 }), //handle rendering bug.
     height: "85%",
     width: "100%",
@@ -322,11 +322,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 30,
     elevation: 3,
     backgroundColor: CustomColors.dark.primaryColor,
-    marginHorizontal: 10,
+    width: "30%",
+    alignSelf: "center",
   },
   searchIcon: {
     marginRight: 5,

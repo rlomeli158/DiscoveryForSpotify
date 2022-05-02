@@ -93,8 +93,8 @@ const HomeScreen = ({ route, navigation }) => {
             </Pressable>
           </View>
           <View>
-            <Gallery title="Your Top Artists" data={topArtists} />
-            <Gallery title="Your Top Songs" data={topTracks} />
+            <Gallery title="Your Top Artists" data={topArtists} isTop={true} />
+            <Gallery title="Your Top Songs" data={topTracks} isTop={true} />
             <Gallery title="Your Playlists" data={playlists} />
             <VerticalList title="Your Recently Played" data={recentlyPlayed} />
           </View>

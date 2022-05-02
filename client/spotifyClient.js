@@ -32,12 +32,14 @@ export const callSearchApi = async (searchQuery, token) => {
 export const callGetRecommendationsApi = async (
   selectedItems,
   limit,
+  extraOptions,
   token
 ) => {
   let spotifyUrl = `https://api.spotify.com/v1/recommendations?&limit=${limit}&`;
   let encodedArtistIds = "";
   let encodedTrackIds = "";
   let encodedGenres = "";
+  let encodedExtraOptions = "&";
 
   selectedItems.forEach((item) => {
     if (item.type === "artist") {
@@ -49,9 +51,20 @@ export const callGetRecommendationsApi = async (
     }
   });
 
+  for (const [key, value] of Object.entries(extraOptions)) {
+    if (value != 0.5) {
+      if (key == "popularity") {
+        encodedExtraOptions += `target_${key}=${Math.round(value * 100)}&`;
+      } else {
+        encodedExtraOptions += `target_${key}=${Math.round(value * 10) / 10}&`;
+      }
+    }
+  }
+
   encodedArtistIds = encodedArtistIds.slice(0, -1);
   encodedTrackIds = encodedTrackIds.slice(0, -1);
   encodedGenres = encodedGenres.slice(0, -1);
+  encodedExtraOptions = encodedExtraOptions.slice(0, -1);
 
   const decodedArray = [];
 
@@ -65,7 +78,9 @@ export const callGetRecommendationsApi = async (
     decodedArray.push("seed_genres=" + encodeURIComponent(encodedGenres));
   }
 
-  const encodedString = decodedArray.join("&");
+  let encodedString = decodedArray.join("&");
+
+  encodedString = encodedString + encodedExtraOptions;
 
   try {
     let spotifyResponse = await fetch(spotifyUrl + encodedString, {
@@ -75,6 +90,7 @@ export const callGetRecommendationsApi = async (
       },
     });
     let responseJson = await spotifyResponse.json();
+    console.log(responseJson);
     let recommendedTracks = responseJson.tracks;
     return recommendedTracks;
   } catch (err) {

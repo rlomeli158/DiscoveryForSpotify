@@ -45,9 +45,10 @@ const InfoScreenTrack = ({ route, navigation }) => {
       type: "track",
       id: id,
     };
+    console.log([currentTrack]);
     // Tracks like this
     setRecommendedTracks(
-      await callGetRecommendationsApi([currentTrack], 10, token)
+      await callGetRecommendationsApi([currentTrack], 10, {}, token)
     );
     // Check if song is in liked
     setSavedStatus(await callCheckTrackSaveStatus(id, token));

@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   Pressable,
 } from "react-native";
-import { View } from "../components/Themed";
+import { Text, View } from "../components/Themed";
 import {
   FlingGestureHandler,
   Directions,
@@ -24,14 +24,15 @@ import { callGetRecommendationsApi } from "../client/spotifyClient";
 const { width } = Dimensions.get("screen");
 const SPACING = 0;
 const ITEM_WIDTH = width * 0.76;
-const ITEM_HEIGHT = ITEM_WIDTH * 1.7;
+const ITEM_HEIGHT = ITEM_WIDTH * 1.6;
 const VISIBLE_ITEMS = 3;
 
 const Recommendations = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
   const playingSound = useSelector((state) => state.playingSound.value);
   const dispatch = useDispatch();
-  const { recommendedTracks, selectedItems, currentIndex } = route.params;
+  const { recommendedTracks, selectedItems, extraOptions, currentIndex } =
+    route.params;
 
   const scrollXIndex = useRef(new Animated.Value(0)).current;
   const scrollXAnimated = useRef(new Animated.Value(0)).current;
@@ -43,7 +44,6 @@ const Recommendations = ({ route, navigation }) => {
   });
 
   useEffect(() => {
-    console.log("Current Index:", currentIndex, "reset:", reset);
     if (currentIndex == 0 && !reset) {
       Animated.spring(scrollXAnimated, {
         toValue: 0,
@@ -80,15 +80,15 @@ const Recommendations = ({ route, navigation }) => {
     }
   }, [index]);
 
-  // useEffect(async () => {
-  //   await navigation.addListener("beforeRemove", async () => {
-  //     if (playingSound != false) {
-  //       console.log("Sound is playing! Trying to stop...");
-  //       stopTrack(playingSound, dispatch);
-  //       console.log("Should have stopped");
-  //     }
-  //   });
-  // }, [navigation, playingSound]);
+  useEffect(async () => {
+    await navigation.addListener("beforeRemove", async () => {
+      if (playingSound != false) {
+        console.log("Sound is playing! Trying to stop...");
+        stopTrack(playingSound, dispatch);
+        console.log("Should have stopped");
+      }
+    });
+  }, [navigation, playingSound]);
 
   return (
     <FlingGestureHandler
@@ -134,15 +134,24 @@ const Recommendations = ({ route, navigation }) => {
             >
               <Ionicons
                 name="chevron-back-circle-outline"
-                size={50}
+                size={40}
                 color="#FFF"
               />
             </Pressable>
+            <Text
+              style={[
+                styles.pageHeader,
+                { justifyContent: "center", alignSelf: "center", fontSize: 25 },
+              ]}
+            >
+              Your Discovery
+            </Text>
             <Pressable
               onPress={async () => {
                 const recommendedTracks = await callGetRecommendationsApi(
                   selectedItems,
                   10,
+                  extraOptions,
                   token
                 );
                 if (playingSound) {
@@ -152,11 +161,12 @@ const Recommendations = ({ route, navigation }) => {
                 navigation.navigate("Recommendations", {
                   recommendedTracks: recommendedTracks,
                   selectedItems: selectedItems,
+                  extraOptions: extraOptions,
                   currentIndex: 0,
                 });
               }}
             >
-              <Ionicons name="refresh-circle-outline" size={50} color="#FFF" />
+              <Ionicons name="refresh-circle-outline" size={40} color="#FFF" />
             </Pressable>
           </View>
           <FlatList

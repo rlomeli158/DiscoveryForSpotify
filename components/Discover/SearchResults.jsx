@@ -1,8 +1,10 @@
 import React from "react";
-import { FlatList, Image } from "react-native";
+import { FlatList, Image, Pressable } from "react-native";
 import { Text, View } from "../Themed";
 import { MaterialIcons } from "@expo/vector-icons";
 import styles from "../../constants/styles";
+import { useSelector, useDispatch } from "react-redux";
+import { addItem } from "../../redux/features/selectedItems";
 
 const defaultImage =
   "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80";
@@ -10,11 +12,10 @@ const defaultImage =
 const genreImage =
   "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTU0fHxtdXNpY3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60";
 
-export default function SearchResult({
-  artistData,
-  selectedItems,
-  setSelectedItems,
-}) {
+const SearchResult = ({ artistData, selectedItems, setSelectedItems }) => {
+  const newSelectedItems = useSelector((state) => state.selectedItems.items);
+  const dispatch = useDispatch();
+
   return (
     <View style={{ marginTop: 10 }}>
       <FlatList
@@ -25,10 +26,11 @@ export default function SearchResult({
               <View
                 style={styles.resultsContainer}
                 onStartShouldSetResponder={() => {
-                  let newList = selectedItems.slice();
-                  if (!newList.includes(item) && newList.length < 5) {
-                    newList.push(item);
-                    setSelectedItems(newList);
+                  if (
+                    !newSelectedItems.includes(item) &&
+                    newSelectedItems.length < 5
+                  ) {
+                    dispatch(addItem(item));
                   }
                 }}
               >
@@ -47,10 +49,11 @@ export default function SearchResult({
             <View
               style={styles.resultsContainer}
               onStartShouldSetResponder={() => {
-                let newList = selectedItems.slice();
-                if (!newList.includes(item) && newList.length < 5) {
-                  newList.push(item);
-                  setSelectedItems(newList);
+                if (
+                  !newSelectedItems.includes(item) &&
+                  newSelectedItems.length < 5
+                ) {
+                  dispatch(addItem(item));
                 }
               }}
             >
@@ -81,7 +84,7 @@ export default function SearchResult({
       />
     </View>
   );
-}
+};
 
 const renderSongInfo = (songInfo) => {
   const songName = songInfo.name;
@@ -107,3 +110,5 @@ const renderSongInfo = (songInfo) => {
     </View>
   );
 };
+
+export default SearchResult;

@@ -18,7 +18,17 @@ const TopScreen = ({ route, navigation }) => {
   const [topArtists, setTopArtists] = useState(false);
   const possibleTerms = ["short_term", "medium_term", "long_term"];
   const [termIndex, setTermIndex] = useState(0);
-  const [size, setSize] = useState("small");
+  const [size, setSize] = useState("medium");
+
+  useEffect(() => {
+    if (route.params) {
+      if (route.params.tab == "artists") {
+        setTracksTabSelected(false);
+      } else {
+        setTracksTabSelected(true);
+      }
+    }
+  }, [route.params]);
 
   useEffect(async () => {
     setLoading(true);
