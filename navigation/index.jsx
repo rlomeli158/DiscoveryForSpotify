@@ -26,6 +26,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import TopScreen from "../screens/TopScreen";
 import CommentTray from "../components/Comment/CommentTray";
+import LoginScreen from "../screens/LoginScreen";
+import { Image } from "react-native";
 
 export default function Navigation({ colorScheme }) {
   return (
@@ -150,10 +152,17 @@ function BottomTabNavigator() {
   return (
     <>
       <BottomTab.Navigator
-        initialRouteName="HomeScreen"
+        initialRouteName="LogInScreen"
         screenOptions={{
           tabBarActiveTintColor: CustomColors.dark.primaryColor,
           tabBarInactiveTintColor: "#FFF",
+          tabBarStyle: {
+            backgroundColor: CustomColors.dark.background,
+            borderTopColor: "#FFF",
+            // backgroundColor: "rgba(49,49, 49, .5)",
+            // backgroundColor: "transparent",
+            // position: "absolute",
+          },
         }}
       >
         <BottomTab.Screen
@@ -171,14 +180,18 @@ function BottomTabNavigator() {
           options={({ route, navigation }) => ({
             title: "Discover",
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <MaterialIcons
-                name="saved-search"
-                size={30}
-                style={{ marginBottom: -3 }}
-                color={color}
-              />
-            ),
+            tabBarIcon: ({ color }) =>
+              color == CustomColors.dark.primaryColor ? (
+                <Image
+                  source={require("../assets/images/DiscoveryLogo.png")}
+                  style={{ height: 25, width: 25 }}
+                />
+              ) : (
+                <Image
+                  source={require("../assets/images/DiscoveryLogoWhite.png")}
+                  style={{ height: 25, width: 25 }}
+                />
+              ),
           })}
         />
         <BottomTab.Screen
@@ -190,6 +203,17 @@ function BottomTabNavigator() {
             tabBarIcon: ({ color }) => (
               <Feather name="trending-up" size={30} color={color} />
             ),
+          })}
+        />
+        <BottomTab.Screen
+          name="LogInScreen"
+          component={LoginScreen}
+          options={({ navigation }) => ({
+            title: "Log In",
+            tabBarStyle: { display: "none" },
+            headerShown: false,
+            tabBarItemStyle: { display: "none" },
+            tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           })}
         />
       </BottomTab.Navigator>

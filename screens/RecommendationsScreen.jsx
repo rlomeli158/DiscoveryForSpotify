@@ -83,9 +83,7 @@ const Recommendations = ({ route, navigation }) => {
   useEffect(async () => {
     await navigation.addListener("beforeRemove", async () => {
       if (playingSound != false) {
-        console.log("Sound is playing! Trying to stop...");
         stopTrack(playingSound, dispatch);
-        console.log("Should have stopped");
       }
     });
   }, [navigation, playingSound]);

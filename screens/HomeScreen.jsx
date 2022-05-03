@@ -34,13 +34,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [topTracks, setTopTracks] = useState();
   const [recentlyPlayed, setRecentlyPlayed] = useState();
   const [playlists, setPlaylists] = useState(false);
-  const [tokenReceived, setTokenReceived] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [signedOut, setSignedOut] = useState(false);
-
-  useEffect(async () => {
-    await getTokens(setTokenReceived, dispatch);
-  }, []);
 
   useEffect(async () => {
     setTopArtists(await callGetUsersTop("artists", "short_term", token));
@@ -49,27 +43,14 @@ const HomeScreen = ({ route, navigation }) => {
     setPlaylists(await callGetPlaylists(token));
     dispatch(setCurrentUser(await callGetCurrentUser(token)));
     setLoading(false);
-  }, [tokenReceived]);
+  }, []);
 
   return (
     <ScrollView
       style={[styles.pageContainer]}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      {signedOut ? (
-        <Pressable
-          onPress={async () => {
-            await getTokens(setTokenReceived, dispatch);
-            setSignedOut(false);
-          }}
-        >
-          <Ionicons
-            name="enter-outline"
-            size={30}
-            color={CustomColors.dark.primaryColor}
-          />
-        </Pressable>
-      ) : loading ? (
+      {loading ? (
         loadingIcon()
       ) : (
         <>
@@ -78,11 +59,14 @@ const HomeScreen = ({ route, navigation }) => {
           >
             <Text style={styles.pageHeader}>Welcome back, {name}</Text>
             <Pressable
-              onPress={() => {
-                SecureStore.setItemAsync("ACCESS_TOKEN", "");
-                SecureStore.setItemAsync("REFRESH_TOKEN", "");
-                SecureStore.setItemAsync("EXPIRATION_TIME", "");
-                setSignedOut(true);
+              onPress={async () => {
+                await SecureStore.setItemAsync("ACCESS_TOKEN", "");
+                await SecureStore.setItemAsync("REFRESH_TOKEN", "");
+                await SecureStore.setItemAsync("EXPIRATION_TIME", "");
+                // setSignedOut(true);
+                navigation.push("Root", {
+                  screen: "LogInScreen",
+                });
               }}
             >
               <Ionicons

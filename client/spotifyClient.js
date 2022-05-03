@@ -90,7 +90,6 @@ export const callGetRecommendationsApi = async (
       },
     });
     let responseJson = await spotifyResponse.json();
-    console.log(responseJson);
     let recommendedTracks = responseJson.tracks;
     return recommendedTracks;
   } catch (err) {

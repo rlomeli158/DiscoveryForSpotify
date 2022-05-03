@@ -422,5 +422,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Poppins",
   },
+  // Log In Page
+  logInButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    borderRadius: 20,
+    elevation: 3,
+    backgroundColor: "#1DB954",
+    width: "50%",
+    alignSelf: "center",
+    marginTop: screenWidth / 3,
+  },
+  logInButtonText: {
+    fontSize: 15,
+  },
 });
 export default styles;
