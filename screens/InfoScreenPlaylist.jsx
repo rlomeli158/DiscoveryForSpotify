@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Image, ScrollView } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   callGetPlaylistInfo,
   callGetMultipleTracksFeatures,
@@ -9,12 +9,19 @@ import { getImageUrl } from "../components/Gallery/Gallery";
 import { Text, View } from "../components/Themed";
 import VerticalList from "../components/VerticalList/VerticalList";
 import styles from "../constants/styles";
+import {
+  setPlayingSound,
+  setSoundSource,
+} from "../redux/features/playingSound";
 import { getTracksIds } from "./InfoScreenAlbum";
 import { loadingIcon, renderImage } from "./InfoScreenArtist";
 import { renderAudioFeatures } from "./InfoScreenTrack";
 
 const InfoScreenPlaylist = ({ route, navigation }) => {
+  const playingSound = useSelector((state) => state.playingSound.value);
   const token = useSelector((state) => state.token.value);
+  const dispatch = useDispatch();
+
   const { playlist } = route.params;
 
   const [playlistInfo, setPlaylistInfo] = useState(false);
@@ -34,6 +41,16 @@ const InfoScreenPlaylist = ({ route, navigation }) => {
       );
     }
   }, [playlistInfo]);
+
+  useEffect(async () => {
+    await navigation.addListener("blur", async () => {
+      if (playingSound != false) {
+        await playingSound.stopAsync();
+        dispatch(setPlayingSound(false));
+        dispatch(setSoundSource(""));
+      }
+    });
+  }, [navigation, playingSound]);
 
   const imageUrl = getImageUrl(playlist);
   return (
@@ -73,7 +90,11 @@ const renderPlaylistInfo = (playlist) => {
           {playlist.owner.display_name}
         </Text>
         <Text style={styles.artistNameInfoPage}>
-          {playlist.public ? "Public" : "Private"}
+          {playlist.public
+            ? "Public"
+            : playlist.public == null
+            ? ""
+            : "Private"}
         </Text>
       </View>
     </View>

@@ -159,9 +159,7 @@ function BottomTabNavigator() {
           tabBarStyle: {
             backgroundColor: CustomColors.dark.background,
             borderTopColor: "#FFF",
-            // backgroundColor: "rgba(49,49, 49, .5)",
-            // backgroundColor: "transparent",
-            // position: "absolute",
+            // height: 80,
           },
         }}
       >

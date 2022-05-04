@@ -3,9 +3,15 @@ import { FlatList, Image, Pressable } from "react-native";
 import styles from "../../constants/styles";
 import { getImageUrl, getSongInfo, renderSongInfo } from "../Gallery/Gallery";
 import { Text, View } from "../Themed";
+import { FontAwesome } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { playTrack, stopTrack } from "../../screens/InfoScreenTrack";
 
 const VerticalList = ({ title, data, albumImage = "", numberOfTracks }) => {
   const navigation = useNavigation();
+  const playingSound = useSelector((state) => state.playingSound.value);
+  const soundSource = useSelector((state) => state.playingSound.source);
+  const dispatch = useDispatch();
 
   return (
     <View>
@@ -30,6 +36,16 @@ const VerticalList = ({ title, data, albumImage = "", numberOfTracks }) => {
           const artistName = songInfoArray[2];
           const playlistName = songInfoArray[3];
 
+          let trackUrl;
+
+          if (item.preview_url) {
+            trackUrl = item.preview_url;
+          } else if (item.track.preview_url) {
+            trackUrl = item.track.preview_url;
+          } else if (item.album.preview_url) {
+            trackUrl = item.album.preview_url;
+          }
+
           return (
             <Pressable
               onPress={() => {
@@ -44,6 +60,44 @@ const VerticalList = ({ title, data, albumImage = "", numberOfTracks }) => {
                 <View style={styles.listText}>
                   {renderSongInfo(songName, artists, artistName, playlistName)}
                 </View>
+                {trackUrl ? (
+                  playingSound && soundSource == trackUrl ? (
+                    <Pressable
+                      onPress={() => {
+                        stopTrack(playingSound, dispatch);
+                      }}
+                      style={{ justifyContent: "center" }}
+                    >
+                      <FontAwesome
+                        style={{
+                          marginHorizontal: 20,
+                        }}
+                        name="pause-circle"
+                        size={30}
+                        color="white"
+                      />
+                    </Pressable>
+                  ) : (
+                    <Pressable
+                      onPress={() => {
+                        if (playingSound && soundSource != trackUrl) {
+                          stopTrack(playingSound, dispatch);
+                        }
+                        playTrack(trackUrl, dispatch);
+                      }}
+                      style={{ justifyContent: "center" }}
+                    >
+                      <FontAwesome
+                        style={{
+                          marginHorizontal: 20,
+                        }}
+                        name="play-circle"
+                        size={30}
+                        color="white"
+                      />
+                    </Pressable>
+                  )
+                ) : null}
               </View>
             </Pressable>
           );

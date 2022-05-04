@@ -20,6 +20,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { playTrack, stopTrack } from "./InfoScreenTrack";
 import { Ionicons } from "@expo/vector-icons";
 import { callGetRecommendationsApi } from "../client/spotifyClient";
+import {
+  setPlayingSound,
+  setSoundSource,
+} from "../redux/features/playingSound";
 
 const { width } = Dimensions.get("screen");
 const SPACING = 0;
@@ -84,6 +88,16 @@ const Recommendations = ({ route, navigation }) => {
     await navigation.addListener("beforeRemove", async () => {
       if (playingSound != false) {
         stopTrack(playingSound, dispatch);
+      }
+    });
+  }, [navigation, playingSound]);
+
+  useEffect(async () => {
+    await navigation.addListener("blur", async () => {
+      if (playingSound != false) {
+        await playingSound.stopAsync();
+        dispatch(setPlayingSound(false));
+        dispatch(setSoundSource(""));
       }
     });
   }, [navigation, playingSound]);

@@ -19,7 +19,10 @@ import { FontAwesome } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
 import * as Progress from "react-native-progress";
 import { loadingIcon, renderImage, renderPopularity } from "./InfoScreenArtist";
-import { setPlayingSound } from "../redux/features/playingSound";
+import {
+  setPlayingSound,
+  setSoundSource,
+} from "../redux/features/playingSound";
 import { Audio } from "expo-av";
 import { openTray } from "../redux/features/commentsTray";
 
@@ -66,6 +69,7 @@ const InfoScreenTrack = ({ route, navigation }) => {
       if (playingSound != false) {
         await playingSound.stopAsync();
         dispatch(setPlayingSound(false));
+        dispatch(setSoundSource(""));
       }
     });
   }, [navigation, playingSound]);
@@ -183,7 +187,7 @@ export const renderInteractions = (
           color="white"
         />
       </Pressable>
-      {track.preview_url ? (
+      {track.preview_url || track.album.preview_url ? (
         playingSound ? (
           <Pressable
             onPress={() => {
@@ -200,7 +204,10 @@ export const renderInteractions = (
         ) : (
           <Pressable
             onPress={() => {
-              playTrack(track.preview_url, dispatch);
+              playTrack(
+                track.preview_url ? track.preview_url : track.album.preview_url,
+                dispatch
+              );
             }}
           >
             <FontAwesome
@@ -252,6 +259,7 @@ export const playTrack = async (link, dispatch) => {
 
   const { sound } = await Audio.Sound.createAsync(source);
   dispatch(setPlayingSound(sound));
+  dispatch(setSoundSource(link));
 
   await sound.playAsync();
 };
@@ -260,6 +268,7 @@ export const stopTrack = async (playingSound, dispatch) => {
   if (playingSound) {
     await playingSound.stopAsync();
     dispatch(setPlayingSound(false));
+    dispatch(setSoundSource(""));
   }
 };
 

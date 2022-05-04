@@ -77,6 +77,9 @@ const Gallery = ({ title, data, selectedItems, isTop }) => {
             <Pressable
               onPress={() => {
                 if (selectedItems) {
+                  if (item.played_at) {
+                    item = item.track;
+                  }
                   if (
                     !newSelectedItems.includes(item) &&
                     newSelectedItems.length < 5
@@ -89,7 +92,7 @@ const Gallery = ({ title, data, selectedItems, isTop }) => {
                   });
                 } else if (songName) {
                   navigation.push("InfoScreenTrack", {
-                    type: item.type,
+                    type: "track",
                     id: item.id,
                   });
                 } else if (artistName) {
@@ -187,6 +190,9 @@ export const getSongInfo = (item) => {
   if (item.played_at) {
     songName = item.track.name;
     artists = item.track.artists;
+  } else if (item.album_type == "single") {
+    artists = item.artists;
+    songName = item.name;
   } else if (item.artists && item.album) {
     songName = item.name;
     artists = item.artists;

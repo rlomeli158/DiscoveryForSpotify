@@ -10,7 +10,9 @@ export const selectedItemsSlice = createSlice({
       state.items.push(action.payload);
     },
     removeItem: (state, action) => {
-      state.items.pop(action.payload);
+      state.items = state.items.filter((item) => {
+        return item.id != action.payload.id;
+      });
     },
     clearAllItems: (state) => {
       state.items = [];

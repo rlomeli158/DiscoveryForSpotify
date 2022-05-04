@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Image, ScrollView } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   callGetAlbumInfo,
   callGetMultipleTracksFeatures,
@@ -9,11 +9,18 @@ import { breakUpArtistArray, getImageUrl } from "../components/Gallery/Gallery";
 import { Text, View } from "../components/Themed";
 import VerticalList from "../components/VerticalList/VerticalList";
 import styles from "../constants/styles";
+import {
+  setPlayingSound,
+  setSoundSource,
+} from "../redux/features/playingSound";
 import { loadingIcon, renderImage, renderPopularity } from "./InfoScreenArtist";
 import { renderAudioFeatures } from "./InfoScreenTrack";
 
 const InfoScreenAlbum = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
+  const playingSound = useSelector((state) => state.playingSound.value);
+  const dispatch = useDispatch();
+
   const { id } = route.params;
 
   const [albumInfo, setAlbumInfo] = useState(false);
@@ -33,6 +40,16 @@ const InfoScreenAlbum = ({ route, navigation }) => {
       );
     }
   }, [albumInfo]);
+
+  useEffect(async () => {
+    await navigation.addListener("blur", async () => {
+      if (playingSound != false) {
+        await playingSound.stopAsync();
+        dispatch(setPlayingSound(false));
+        dispatch(setSoundSource(""));
+      }
+    });
+  }, [navigation, playingSound]);
 
   const imageUrl = getImageUrl(albumInfo);
 

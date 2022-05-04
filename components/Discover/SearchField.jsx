@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable, TextInput, ScrollView } from "react-native";
+import { Image, Pressable, TextInput, ScrollView } from "react-native";
 import { Text, View } from "../Themed";
 import CustomColors from "../../constants/Colors";
 import SearchResults from "./SearchResults";
@@ -11,6 +11,7 @@ import {
   callSearchApi,
   callGetRecommendationsApi,
   callGetUsersTop,
+  callRecentlyPlayed,
 } from "../../client/spotifyClient";
 import { useSelector, useDispatch } from "react-redux";
 import Gallery from "../Gallery/Gallery";
@@ -31,6 +32,7 @@ const SearchField = ({ onFocus = () => {} }) => {
 
   const [topArtists, setTopArtists] = useState();
   const [topTracks, setTopTracks] = useState();
+  const [recentlyPlayed, setRecentlyPlayed] = useState();
 
   const [acoustic, setAcoustic] = useState(0.5);
   const [danceability, setDanceability] = useState(0.5);
@@ -54,6 +56,7 @@ const SearchField = ({ onFocus = () => {} }) => {
   useEffect(async () => {
     setTopArtists(await callGetUsersTop("artists", "short_term", token));
     setTopTracks(await callGetUsersTop("tracks", "short_term", token));
+    setRecentlyPlayed(await callRecentlyPlayed(token));
   }, []);
 
   const renderOptions = () => {
@@ -116,11 +119,9 @@ const SearchField = ({ onFocus = () => {} }) => {
             },
           ]}
         >
-          <MaterialIcons
-            name="saved-search"
-            size={30}
-            color={CustomColors.dark.primaryColor}
-            style={styles.searchIcon}
+          <Image
+            source={require("../../assets/images/DiscoveryLogoWhite.png")}
+            style={{ height: 25, width: 25, marginRight: 8 }}
           />
           <TextInput
             autoCorrect={false}
@@ -152,9 +153,7 @@ const SearchField = ({ onFocus = () => {} }) => {
           />
         </View>
       </View>
-      {artistData
-        ? renderSearchResults(artistData, selectedItems, setSelectedItems)
-        : null}
+      {artistData ? renderSearchResults(artistData) : null}
       <ScrollView>
         <CustomSlider data={newSelectedItems} />
       </ScrollView>
@@ -214,13 +213,16 @@ const SearchField = ({ onFocus = () => {} }) => {
         title="Select from Your Top Songs"
         data={topTracks}
         selectedItems={selectedItems}
-        setSelectedItems={setSelectedItems}
       />
       <Gallery
         title="Select from Your Top Artists"
         data={topArtists}
         selectedItems={selectedItems}
-        setSelectedItems={setSelectedItems}
+      />
+      <Gallery
+        title="Select from Your Recently Played"
+        data={recentlyPlayed}
+        selectedItems={selectedItems}
       />
     </ScrollView>
   );
@@ -253,14 +255,8 @@ const renderSlider = (title, state, setState) => {
   );
 };
 
-const renderSearchResults = (artistData, selectedItems, setSelectedItems) => {
-  return (
-    <SearchResults
-      artistData={artistData}
-      selectedItems={selectedItems}
-      setSelectedItems={setSelectedItems}
-    />
-  );
+const renderSearchResults = (artistData) => {
+  return <SearchResults artistData={artistData} />;
 };
 
 const callGetRecommendations = async (

@@ -1,4 +1,6 @@
+import { useDispatch } from "react-redux";
 import { arrayOfGenres } from "../constants/genres";
+import { checkIfExpired, getTokens } from "./authenticationClient";
 
 export const callSearchApi = async (searchQuery, token) => {
   let spotifyResponse = await fetch(
@@ -99,6 +101,10 @@ export const callGetRecommendationsApi = async (
 };
 
 export const callGetUsersTop = async (type, term = "short_term", token) => {
+  // const dispatch = useDispatch();
+  // if (checkIfExpired()) {
+  //   await getTokens(() => {}, dispatch);
+  // }
   const spotifyUrl = "https://api.spotify.com/v1/me/top/";
 
   try {
@@ -461,6 +467,47 @@ export const callGetUserInfo = async (userId, token) => {
     let currentUserInfo = await spotifyResponse.json();
 
     return currentUserInfo;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetNewReleases = async (country, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/browse/new-releases?country=${country}`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let newReleases = await spotifyResponse.json();
+
+    let exampleThing = newReleases.albums.items;
+    return exampleThing;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetTopPlaylists = async (country, token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/browse/categories/toplists/playlists?country=${country}&offset=0&limit=20`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let responseJson = await spotifyResponse.json();
+    // console.log();
+    let playlists = responseJson.playlists.items;
+
+    return playlists;
   } catch (err) {
     console.log(err);
   }

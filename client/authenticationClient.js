@@ -167,3 +167,18 @@ export const refreshTokens = async (setTokenReceived, dispatch) => {
     console.error(err);
   }
 };
+
+export const checkIfExpired = async () => {
+  const existingToken = await SecureStore.getItemAsync("ACCESS_TOKEN");
+  const existingExpiration = await SecureStore.getItemAsync("EXPIRATION_TIME");
+
+  if (existingToken) {
+    if (new Date().getTime() > existingExpiration) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return true;
+  }
+};
