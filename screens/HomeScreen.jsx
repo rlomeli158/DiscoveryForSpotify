@@ -1,4 +1,10 @@
-import { TextInput, Image, Pressable, ScrollView } from "react-native";
+import {
+  ImageBackground,
+  TextInput,
+  Image,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 import Gallery from "../components/Gallery/Gallery";
@@ -20,7 +26,7 @@ import { loadingIcon } from "./InfoScreenArtist";
 import * as SecureStore from "expo-secure-store";
 import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
-import { getTokens } from "../client/authenticationClient";
+import { checkIfExpired, getTokens } from "../client/authenticationClient";
 import { setCurrentUser } from "../redux/features/currentUser";
 import SearchResult from "../components/Discover/SearchResults";
 import {
@@ -55,6 +61,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [artistData, setArtistData] = useState([]);
 
   useEffect(async () => {
+    await getTokens(() => {}, dispatch);
     setTopArtists(await callGetUsersTop("artists", "short_term", token));
     setTopTracks(await callGetUsersTop("tracks", "short_term", token));
     setRecentlyPlayed(await callRecentlyPlayed(token));
@@ -93,9 +100,7 @@ const HomeScreen = ({ route, navigation }) => {
             style={[
               styles.discoverTextBox,
               {
-                borderColor: isFocused
-                  ? CustomColors.dark.primaryColor
-                  : CustomColors.dark.primaryText,
+                borderColor: isFocused ? "#FFF" : "#313131",
               },
             ]}
           >
@@ -144,61 +149,76 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView
-      style={[styles.pageContainer]}
-      contentContainerStyle={{ paddingBottom: 100 }}
+    <ImageBackground
+      style={{ width: "100%", height: "100%" }}
+      source={require(".././assets/images/blackCircularGradient.png")}
     >
-      {loading ? (
-        loadingIcon()
-      ) : (
-        <>
-          {currentlySearching ? (
-            renderSearch()
-          ) : (
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <Pressable
-                onPress={() => {
-                  setCurrentlySearching(true);
+      <ScrollView
+        style={[styles.pageContainer]}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        {loading ? (
+          loadingIcon()
+        ) : (
+          <>
+            {currentlySearching ? (
+              renderSearch()
+            ) : (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                <Image
-                  source={require("../assets/images/DiscoveryLogoWhite.png")}
-                  style={{ height: 30, width: 30, marginLeft: 5 }}
-                />
-              </Pressable>
-              <Text style={styles.pageHeader}>Today's Overview</Text>
-              <Pressable
-                onPress={async () => {
-                  await SecureStore.setItemAsync("ACCESS_TOKEN", "");
-                  await SecureStore.setItemAsync("REFRESH_TOKEN", "");
-                  await SecureStore.setItemAsync("EXPIRATION_TIME", "");
-                  navigation.push("Root", {
-                    screen: "LogInScreen",
-                  });
-                }}
-              >
-                <Ionicons
-                  name="exit-outline"
-                  size={30}
-                  color={CustomColors.dark.primaryColor}
-                />
-              </Pressable>
-            </View>
-          )}
+                <Pressable
+                  onPress={() => {
+                    setCurrentlySearching(true);
+                  }}
+                >
+                  <Image
+                    source={require("../assets/images/DiscoveryLogoWhite.png")}
+                    style={{ height: 30, width: 30, marginLeft: 5 }}
+                  />
+                </Pressable>
+                <Text style={styles.pageHeader}>Today's Overview</Text>
+                <Pressable
+                  onPress={async () => {
+                    await SecureStore.setItemAsync("ACCESS_TOKEN", "");
+                    await SecureStore.setItemAsync("REFRESH_TOKEN", "");
+                    await SecureStore.setItemAsync("EXPIRATION_TIME", "");
+                    navigation.navigate("Root", {
+                      screen: "LogInScreen",
+                    });
+                  }}
+                >
+                  <Ionicons
+                    name="exit-outline"
+                    size={30}
+                    color={CustomColors.dark.primaryColor}
+                  />
+                </Pressable>
+              </View>
+            )}
 
-          <View>
-            <Gallery title="Your Top Artists" data={topArtists} isTop={true} />
-            <Gallery title="Your Top Songs" data={topTracks} isTop={true} />
-            <Gallery title="Your Playlists" data={playlists} />
-            <Gallery title="New Releases" data={newReleases} />
-            <Gallery title="Popular Playlists" data={topPlaylists} />
-            <VerticalList title="Your Recently Played" data={recentlyPlayed} />
-          </View>
-        </>
-      )}
-    </ScrollView>
+            <View>
+              <Gallery
+                title="Your Top Artists"
+                data={topArtists}
+                isTop={true}
+              />
+              <Gallery title="Your Top Songs" data={topTracks} isTop={true} />
+              <Gallery title="Your Playlists" data={playlists} />
+              <Gallery title="New Releases" data={newReleases} />
+              <Gallery title="Popular Playlists" data={topPlaylists} />
+              <VerticalList
+                title="Your Recently Played"
+                data={recentlyPlayed}
+              />
+            </View>
+          </>
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 };
 

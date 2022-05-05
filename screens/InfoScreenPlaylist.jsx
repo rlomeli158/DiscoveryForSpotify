@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { Image, ScrollView } from "react-native";
+import { ImageBackground, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { getTokens } from "../client/authenticationClient";
 import {
   callGetPlaylistInfo,
   callGetMultipleTracksFeatures,
 } from "../client/spotifyClient";
 import { getImageUrl } from "../components/Gallery/Gallery";
+import OpenInSpotify from "../components/openInSpotify";
 import { Text, View } from "../components/Themed";
 import VerticalList from "../components/VerticalList/VerticalList";
 import styles from "../constants/styles";
@@ -29,6 +31,7 @@ const InfoScreenPlaylist = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(async () => {
+    await getTokens(() => {}, dispatch);
     setPlaylistInfo(await callGetPlaylistInfo(playlist.id, token));
     setLoading(false);
   }, []);
@@ -54,24 +57,30 @@ const InfoScreenPlaylist = ({ route, navigation }) => {
 
   const imageUrl = getImageUrl(playlist);
   return (
-    <ScrollView
-      style={styles.infoPageContainer}
-      contentContainerStyle={{ paddingBottom: 50 }}
+    <ImageBackground
+      style={{ width: "100%", height: "100%" }}
+      source={require(".././assets/images/blackCircularGradient.png")}
     >
-      {loading ? (
-        loadingIcon()
-      ) : (
-        <>
-          {renderImage(imageUrl, navigation)}
-          <View style={styles.infoPageTextContainer}>
-            {renderPlaylistInfo(playlist)}
-            {renderPlaylistDescription(playlist)}
-            {renderAudioFeatures(playlistAudioFeatures)}
-            {renderTracks(playlistInfo.tracks)}
-          </View>
-        </>
-      )}
-    </ScrollView>
+      <ScrollView
+        style={styles.infoPageContainer}
+        contentContainerStyle={{ paddingBottom: 50 }}
+      >
+        {loading ? (
+          loadingIcon()
+        ) : (
+          <>
+            {renderImage(imageUrl, navigation)}
+            <View style={styles.infoPageTextContainer}>
+              {renderPlaylistInfo(playlist)}
+              {renderPlaylistDescription(playlist)}
+              {renderAudioFeatures(playlistAudioFeatures)}
+              {OpenInSpotify(playlist.external_urls.spotify)}
+              {renderTracks(playlistInfo.tracks)}
+            </View>
+          </>
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 };
 

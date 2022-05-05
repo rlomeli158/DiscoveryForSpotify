@@ -1,4 +1,5 @@
 import { Dimensions, StyleSheet, Platform } from "react-native";
+import { LinearGradient } from "react-native-svg";
 import CustomColors from "./Colors";
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -6,8 +7,10 @@ const styles = StyleSheet.create({
   //General page styles
   pageContainer: {
     backgroundColor: CustomColors.dark.background,
+    // backgroundColor: "transparent",
     paddingTop: 75,
     paddingHorizontal: 10,
+    paddingBottom: 100,
   },
   pageSeparator: {
     marginVertical: 10,
@@ -74,7 +77,8 @@ const styles = StyleSheet.create({
   songContainer: {
     borderRadius: 14,
     overflow: "hidden",
-    backgroundColor: "#696969",
+    backgroundColor: "#313131",
+    borderColor: "#FFF",
     marginVertical: 5,
     width: "100%",
     height: screenWidth / 5,
@@ -88,7 +92,7 @@ const styles = StyleSheet.create({
   },
   listText: {
     flex: 1,
-    backgroundColor: "#696969",
+    backgroundColor: "#313131",
     justifyContent: "center",
     marginLeft: 10,
   },
@@ -120,7 +124,7 @@ const styles = StyleSheet.create({
   genreContainer: {
     flex: 1,
     borderRadius: 20,
-    backgroundColor: "#696969",
+    backgroundColor: "#313131",
     padding: 10,
     margin: 5,
   },
@@ -246,7 +250,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "black",
+    backgroundColor: CustomColors.dark.primaryColor,
   },
   inactiveDotStyle: {
     backgroundColor: CustomColors.dark.placeholderColor,
@@ -339,7 +343,7 @@ const styles = StyleSheet.create({
   discoverTextBox: {
     height: 40,
     width: "100%",
-    backgroundColor: CustomColors.dark.formBackground,
+    backgroundColor: "#313131",
     flexDirection: "row",
     paddingHorizontal: 5,
     borderWidth: 0.5,
@@ -426,16 +430,31 @@ const styles = StyleSheet.create({
   logInButton: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 20,
     elevation: 3,
+    // backgroundColor: CustomColors.dark.primaryColor,
     backgroundColor: "#1DB954",
-    width: "50%",
+    width: "55%",
     alignSelf: "center",
-    marginTop: screenWidth / 3,
+    marginTop: 20,
+    flexDirection: "row",
   },
   logInButtonText: {
-    fontSize: 15,
+    fontSize: 17,
   },
+  // //Open in Spotify
+  // logInButton: {
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   paddingVertical: 10,
+  //   borderRadius: 20,
+  //   elevation: 3,
+  //   // backgroundColor: CustomColors.dark.primaryColor,
+  //   backgroundColor: "#1DB954",
+  //   width: "50%",
+  //   alignSelf: "center",
+  //   marginTop: 20,
+  // },
 });
 export default styles;

@@ -10,10 +10,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import ModalScreen from "../screens/ModalScreen";
-import NotFoundScreen from "../screens/NotFoundScreen";
 import Recommendations from "../screens/RecommendationsScreen";
-import TabTwoScreen from "../screens/TabTwoScreen";
 import LinkingConfiguration from "./LinkingConfiguration";
 import Discover from "../screens/DiscoverScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -51,19 +48,6 @@ function RootNavigator() {
         component={BottomTabNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="NotFound"
-        component={NotFoundScreen}
-        options={{ title: "Oops!" }}
-      />
-      {/* <Stack.Screen
-        name="Recommendations"
-        component={Recommendations}
-        options={{ headerShown: false }}
-      /> */}
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
     </Stack.Navigator>
   );
 }
@@ -157,9 +141,9 @@ function BottomTabNavigator() {
           tabBarActiveTintColor: CustomColors.dark.primaryColor,
           tabBarInactiveTintColor: "#FFF",
           tabBarStyle: {
-            backgroundColor: CustomColors.dark.background,
-            borderTopColor: "#FFF",
-            // height: 80,
+            // backgroundColor: "#313131",
+            backgroundColor: "#000",
+            paddingTop: 5,
           },
         }}
       >

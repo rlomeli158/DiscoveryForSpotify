@@ -17,6 +17,8 @@ import { useSelector, useDispatch } from "react-redux";
 import Gallery from "../Gallery/Gallery";
 import { Slider } from "@miblanchard/react-native-slider";
 import { clearAllItems } from "../../redux/features/selectedItems";
+import { SCREEN_WIDTH } from "@gorhom/bottom-sheet";
+import { getTokens } from "../../client/authenticationClient";
 
 const SearchField = ({ onFocus = () => {} }) => {
   const newSelectedItems = useSelector((state) => state.selectedItems.items);
@@ -54,6 +56,7 @@ const SearchField = ({ onFocus = () => {} }) => {
   }, [newSelectedItems]);
 
   useEffect(async () => {
+    await getTokens(() => {}, dispatch);
     setTopArtists(await callGetUsersTop("artists", "short_term", token));
     setTopTracks(await callGetUsersTop("tracks", "short_term", token));
     setRecentlyPlayed(await callRecentlyPlayed(token));
@@ -113,9 +116,7 @@ const SearchField = ({ onFocus = () => {} }) => {
           style={[
             styles.discoverTextBox,
             {
-              borderColor: isFocused
-                ? CustomColors.dark.primaryColor
-                : CustomColors.dark.primaryText,
+              borderColor: isFocused ? "#FFF" : "#313131",
             },
           ]}
         >
@@ -154,9 +155,7 @@ const SearchField = ({ onFocus = () => {} }) => {
         </View>
       </View>
       {artistData ? renderSearchResults(artistData) : null}
-      <ScrollView>
-        <CustomSlider data={newSelectedItems} />
-      </ScrollView>
+      <CustomSlider data={newSelectedItems} />
       {newSelectedItems.length > 0 ? (
         <View
           style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}

@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView } from "react-native";
+import { ImageBackground, Pressable, ScrollView } from "react-native";
 import { callGetUsersTop } from "../client/spotifyClient";
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 import { loadingIcon } from "./InfoScreenArtist";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Grid from "../components/Grid/Grid";
 import CustomColors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { getTokens } from "../client/authenticationClient";
 
 const TopScreen = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
@@ -19,6 +20,8 @@ const TopScreen = ({ route, navigation }) => {
   const possibleTerms = ["short_term", "medium_term", "long_term"];
   const [termIndex, setTermIndex] = useState(0);
   const [size, setSize] = useState("medium");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (route.params) {
@@ -32,6 +35,7 @@ const TopScreen = ({ route, navigation }) => {
 
   useEffect(async () => {
     setLoading(true);
+    await getTokens(() => {}, dispatch);
     setTopArtists(
       await callGetUsersTop("artists", possibleTerms[termIndex], token)
     );
@@ -42,29 +46,34 @@ const TopScreen = ({ route, navigation }) => {
   }, [termIndex]);
 
   return (
-    <ScrollView
-      style={styles.pageContainer}
-      contentContainerStyle={{ paddingBottom: 100 }}
+    <ImageBackground
+      style={{ width: "100%", height: "100%" }}
+      source={require(".././assets/images/blackCircularGradient.png")}
     >
-      {renderTopBar(
-        termIndex,
-        setTermIndex,
-        size,
-        setSize,
-        tracksTabSelected,
-        possibleTerms
-      )}
-      {renderTabs(tracksTabSelected, setTracksTabSelected)}
-      <View>
-        {loading ? (
-          loadingIcon()
-        ) : tracksTabSelected ? (
-          <Grid data={topTracks} size={size} />
-        ) : (
-          <Grid data={topArtists} size={size} />
+      <ScrollView
+        style={styles.pageContainer}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        {renderTopBar(
+          termIndex,
+          setTermIndex,
+          size,
+          setSize,
+          tracksTabSelected,
+          possibleTerms
         )}
-      </View>
-    </ScrollView>
+        {renderTabs(tracksTabSelected, setTracksTabSelected)}
+        <View>
+          {loading ? (
+            loadingIcon()
+          ) : tracksTabSelected ? (
+            <Grid data={topTracks} size={size} />
+          ) : (
+            <Grid data={topArtists} size={size} />
+          )}
+        </View>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 

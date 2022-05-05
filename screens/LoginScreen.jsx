@@ -6,6 +6,7 @@ import { getTokens } from "../client/authenticationClient";
 import { View, Text } from "../components/Themed";
 import * as SecureStore from "expo-secure-store";
 import styles from "../constants/styles";
+import CustomColors from "../constants/Colors";
 
 if (typeof Buffer === "undefined") {
   global.Buffer = require("buffer").Buffer;
@@ -22,43 +23,88 @@ const LoginScreen = ({ route, navigation }) => {
     if (currentToken) {
       await getTokens(setTokenReceived, dispatch);
     }
-    //   await getTokens(setTokenReceived, dispatch);
   }, []);
 
   useEffect(async () => {
     if (tokenReceived) {
-      navigation.push("Root", {
+      navigation.navigate("Root", {
         screen: "HomeScreen",
       });
     }
   }, [tokenReceived]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <ImageBackground
-        style={{ height: WINDOW_HEIGHT, width: SCREEN_WIDTH }}
-        source={require("../assets/images/splashScreenV1.png")}
-      />
-      <View
-        style={{
-          height: "100%",
-          width: "100%",
-          backgroundColor: "rgba(255, 255, 255, 0.0000001)",
-          position: "absolute",
-          justifyContent: "center",
-          alignContent: "center",
-        }}
-      >
-        <Pressable
-          style={styles.logInButton}
-          onPress={async () => {
-            await getTokens(setTokenReceived, dispatch);
+    <ImageBackground
+      style={{ height: WINDOW_HEIGHT, width: SCREEN_WIDTH }}
+      source={require(".././assets/images/blackCircularGradient.png")}
+    >
+      <View style={{ flex: 1 }}>
+        <View
+          style={{
+            height: "100%",
+            width: "100%",
+            position: "absolute",
+            justifyContent: "center",
+            alignContent: "center",
           }}
         >
-          <Text style={styles.logInButtonText}>Log in with Spotify</Text>
-        </Pressable>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <Image
+              source={require("../assets/images/DiscoveryLogo.png")}
+              style={{
+                height: 70,
+                width: 70,
+                justifyContent: "center",
+                alignSelf: "center",
+                marginRight: 20,
+              }}
+            />
+            <View>
+              <Text
+                style={{
+                  fontSize: 50,
+                  alignContent: "center",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  textAlign: "left",
+                }}
+              >
+                Discovery
+              </Text>
+              {/* <Text
+                style={{
+                  fontSize: 40,
+                  alignContent: "center",
+                  justifyContent: "center",
+                  alignSelf: "flex-start",
+                  textAlign: "left",
+                  color: "#1DB954",
+                }}
+              >
+                for Spotify
+              </Text> */}
+            </View>
+          </View>
+          <Pressable
+            style={styles.logInButton}
+            onPress={async () => {
+              await getTokens(setTokenReceived, dispatch);
+              if (token) {
+                navigation.navigate("Root", {
+                  screen: "HomeScreen",
+                });
+              }
+            }}
+          >
+            <Text style={styles.logInButtonText}>Log in with Spotify</Text>
+            <Image
+              style={{ height: 20, width: 20, marginLeft: 5 }}
+              source={require("../assets/images/Spotify_Icon_RGB_White.png")}
+            />
+          </Pressable>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 

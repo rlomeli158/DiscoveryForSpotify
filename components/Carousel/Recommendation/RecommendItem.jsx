@@ -7,6 +7,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import CustomColors from "../../../constants/Colors";
 import { useSelector } from "react-redux";
 import { removeItem } from "../../../redux/features/selectedItems";
+import { AntDesign } from "@expo/vector-icons";
 
 const CarouselItem = ({ item, index }, parallaxProps, dispatch) => {
   return (
@@ -36,7 +37,11 @@ const CarouselItem = ({ item, index }, parallaxProps, dispatch) => {
           }}
           style={{ position: "absolute", top: 0, left: -15 }}
         >
-          <FontAwesome5 name="trash" size={50} color="#FFF" />
+          <AntDesign
+            name="closecircle"
+            size={50}
+            color={CustomColors.dark.primaryColor}
+          />
         </Pressable>
         {item.artists && item.album ? (
           renderSongInfo(item)

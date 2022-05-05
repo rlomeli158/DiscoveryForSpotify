@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Image, View, Text, Pressable, FlatList } from "react-native";
+import { Image, View, Text, Pressable, FlatList, Linking } from "react-native";
 import { callGetUserInfo } from "../../client/spotifyClient";
 import styles from "../../constants/styles";
 import { useSelector } from "react-redux";
@@ -73,10 +73,16 @@ const CommentItem = ({
             : styles.individualCommentContainer
         }
       >
-        <Image
-          style={isReply ? styles.replyProfilePic : styles.commentProfilePic}
-          source={{ uri: user ? user.images[0].url : defaultImage }}
-        />
+        <Pressable
+          onPress={() => {
+            Linking.openURL(user.external_urls.spotify);
+          }}
+        >
+          <Image
+            style={isReply ? styles.replyProfilePic : styles.commentProfilePic}
+            source={{ uri: user ? user.images[0].url : defaultImage }}
+          />
+        </Pressable>
         <View style={styles.commentTextContainer}>
           <View>
             <Text style={styles.commentDisplayName}>{user.display_name}</Text>

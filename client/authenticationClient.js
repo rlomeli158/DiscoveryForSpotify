@@ -73,7 +73,11 @@ export const getAuthorizationCode = async () => {
   } catch (err) {
     console.error(err);
   }
-  return [result.params.code, currentVerifier];
+  if (result.type !== "cancel") {
+    return [result.params.code, currentVerifier];
+  } else {
+    return false;
+  }
 };
 
 export const getTokens = async (setTokenReceived, dispatch) => {
@@ -95,6 +99,9 @@ export const getTokens = async (setTokenReceived, dispatch) => {
   } else {
     try {
       const resultsArr = await getAuthorizationCode();
+      if (!resultsArr) {
+        return null;
+      }
       const authorizationCode = resultsArr[0];
       const verifier = resultsArr[1];
 

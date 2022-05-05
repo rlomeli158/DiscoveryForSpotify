@@ -7,8 +7,10 @@ import { Provider, useDispatch } from "react-redux";
 import store from "./redux/store";
 import { useFonts } from "expo-font";
 import { initializeApp, getApps } from "firebase/app";
+import { LogBox } from "react-native";
 
 export default function App() {
+  LogBox.ignoreLogs(["VirtualizedLists should never be nested"]); // Ignore log notification by message
   const isLoadingComplete = useCachedResources();
 
   if (getApps.length == 0) {

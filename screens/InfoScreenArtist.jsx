@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import {
   Dimensions,
   ScrollView,
-  Image,
   ImageBackground,
   FlatList,
   Pressable,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   callGetArtistAlbums,
   callGetArtistTopTracks,
@@ -21,6 +20,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../constants/Colors";
 import * as Progress from "react-native-progress";
+import OpenInSpotify from "../components/openInSpotify";
+import { getTokens } from "../client/authenticationClient";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -32,8 +33,10 @@ const InfoScreenArtist = ({ route, navigation }) => {
   const [artistAlbums, setArtistAlbums] = useState(false);
   const [relatedArtists, setRelatedArtists] = useState(false);
   const [artistTopTracks, setArtistTopTracks] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(async () => {
+    await getTokens(() => {}, dispatch);
     setArtist(await callGetInfo(type, id, token));
     if (type == "artist") {
       setArtistTopTracks(await callGetArtistTopTracks(id, token)); // Array
@@ -49,42 +52,48 @@ const InfoScreenArtist = ({ route, navigation }) => {
   const inactivePopularityIcons = 10 - activePopularityIcons;
 
   return (
-    <ScrollView
-      style={styles.infoPageContainer}
-      contentContainerStyle={{ paddingBottom: 30 }}
+    <ImageBackground
+      style={{ width: "100%", height: "100%" }}
+      source={require(".././assets/images/blackCircularGradient.png")}
     >
-      {loading ? (
-        loadingIcon()
-      ) : (
-        <>
-          {renderImage(imageUrl, navigation)}
-          <View style={styles.infoPageTextContainer}>
-            <View>
-              <Text style={styles.artistSubheader}>{artist.name}</Text>
-              <Text style={styles.artistFollowers}>
-                {artist.followers.total.toLocaleString()} Followers
-              </Text>
-            </View>
-            <Gallery
-              title={`${artist.name}'s Top Tracks`}
-              data={artistTopTracks}
-            />
-            {artistAlbums.length > 0 ? (
+      <ScrollView
+        style={styles.infoPageContainer}
+        contentContainerStyle={{ paddingBottom: 30 }}
+      >
+        {loading ? (
+          loadingIcon()
+        ) : (
+          <>
+            {renderImage(imageUrl, navigation)}
+            <View style={styles.infoPageTextContainer}>
+              <View>
+                <Text style={styles.artistSubheader}>{artist.name}</Text>
+                <Text style={styles.artistFollowers}>
+                  {artist.followers.total.toLocaleString()} Followers
+                </Text>
+              </View>
               <Gallery
-                title={`${artist.name}'s Top Albums`}
-                data={artistAlbums}
+                title={`${artist.name}'s Top Tracks`}
+                data={artistTopTracks}
               />
-            ) : null}
-            <Gallery
-              title={`Artists Like ${artist.name}`}
-              data={relatedArtists}
-            />
-            {renderPopularity(activePopularityIcons, inactivePopularityIcons)}
-            {renderGenres(artist.genres)}
-          </View>
-        </>
-      )}
-    </ScrollView>
+              {artistAlbums.length > 0 ? (
+                <Gallery
+                  title={`${artist.name}'s Top Albums`}
+                  data={artistAlbums}
+                />
+              ) : null}
+              <Gallery
+                title={`Artists Like ${artist.name}`}
+                data={relatedArtists}
+              />
+              {renderPopularity(activePopularityIcons, inactivePopularityIcons)}
+              {renderGenres(artist.genres)}
+              {OpenInSpotify(artist.external_urls.spotify)}
+            </View>
+          </>
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 };
 

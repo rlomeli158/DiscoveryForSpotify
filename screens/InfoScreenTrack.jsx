@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Image } from "react-native";
+import { ImageBackground, Pressable, ScrollView, Image } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import {
   callCheckTrackSaveStatus,
@@ -25,6 +25,8 @@ import {
 } from "../redux/features/playingSound";
 import { Audio } from "expo-av";
 import { openTray } from "../redux/features/commentsTray";
+import OpenInSpotify from "../components/openInSpotify";
+import { getTokens } from "../client/authenticationClient";
 
 const InfoScreenTrack = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
@@ -41,6 +43,7 @@ const InfoScreenTrack = ({ route, navigation }) => {
   const [saveStatus, setSavedStatus] = useState("");
 
   useEffect(async () => {
+    await getTokens(() => {}, dispatch);
     setTrack(await callGetInfo(type, id, token));
     // Get audio features
     setAudioFeatures(await callGetTrackFeatures(id, token));
@@ -85,41 +88,47 @@ const InfoScreenTrack = ({ route, navigation }) => {
   const duration = new Date(track.duration_ms);
 
   return (
-    <ScrollView
-      style={styles.infoPageContainer}
-      contentContainerStyle={{ paddingBottom: 50 }}
+    <ImageBackground
+      style={{ width: "100%", height: "100%" }}
+      source={require(".././assets/images/blackCircularGradient.png")}
     >
-      {loading ? (
-        loadingIcon()
-      ) : (
-        <>
-          {renderImage(imageUrl, navigation)}
-          <View style={styles.infoPageTextContainer}>
-            <View style={{ flexDirection: "row" }}>
-              {renderSongInfo(track.name, track.artists, duration)}
+      <ScrollView
+        style={styles.infoPageContainer}
+        contentContainerStyle={{ paddingBottom: 50 }}
+      >
+        {loading ? (
+          loadingIcon()
+        ) : (
+          <>
+            {renderImage(imageUrl, navigation)}
+            <View style={styles.infoPageTextContainer}>
+              <View style={{ flexDirection: "row" }}>
+                {renderSongInfo(track.name, track.artists, duration)}
+              </View>
+              {renderInteractions(
+                track,
+                playingSound,
+                dispatch,
+                saveStatus,
+                setSavedStatus,
+                token
+              )}
+              {renderRecommendedTracks(recommendedTracks)}
+              {renderAlbum(
+                track.album,
+                imageUrl,
+                artist,
+                artistImageUrl,
+                navigation
+              )}
+              {renderAudioFeatures(audioFeatures)}
+              {renderPopularity(activePopularityIcons, inactivePopularityIcons)}
+              {OpenInSpotify(track.external_urls.spotify)}
             </View>
-            {renderInteractions(
-              track,
-              playingSound,
-              dispatch,
-              saveStatus,
-              setSavedStatus,
-              token
-            )}
-            {renderRecommendedTracks(recommendedTracks)}
-            {renderAlbum(
-              track.album,
-              imageUrl,
-              artist,
-              artistImageUrl,
-              navigation
-            )}
-            {renderAudioFeatures(audioFeatures)}
-            {renderPopularity(activePopularityIcons, inactivePopularityIcons)}
-          </View>
-        </>
-      )}
-    </ScrollView>
+          </>
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
