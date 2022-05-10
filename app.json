@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "DiscoveryForSpotify",
-    "slug": "DiscoveryForSpotify",
+    "name": "Discovery for You",
+    "slug": "discovery",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/DiscoveryAppIcon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "dark",
     "splash": {
@@ -19,7 +19,9 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.discovery.discovery",
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +32,7 @@
     "web": {
       "favicon": "./assets/images/favicon.png",
       "config": {
-        "firebase" : {
+        "firebase": {
           "apiKey": "AIzaSyCNr9SNkIUEbpYGMtRUXvtyNlhbXqxIz3A",
           "authDomain": "discovery-for-spotify.firebaseapp.com",
           "projectId": "discovery-for-spotify",

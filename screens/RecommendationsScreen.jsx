@@ -67,13 +67,6 @@ const Recommendations = ({ route, navigation }) => {
     }).start();
   });
 
-  // useEffect(() => {
-  //   console.log("RESETTING ?", resetActiveIndex);
-  //   if (resetActiveIndex[0] == true) {
-  //     setActiveIndex(0);
-  //   }
-  // }, []);
-
   useEffect(() => {
     if (playingSound) {
       stopTrack(playingSound, dispatch);

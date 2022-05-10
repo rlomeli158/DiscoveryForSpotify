@@ -16,6 +16,8 @@ import {
   deleteReply,
   deleteComment,
 } from "../../client/firestoreApi";
+import { AntDesign } from "@expo/vector-icons";
+import CustomColors from "../../constants/Colors";
 
 const defaultImage =
   "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png";
@@ -30,10 +32,14 @@ const CommentItem = ({
   originalComment = null,
 }) => {
   const token = useSelector((state) => state.token.value);
+  const currentUser = useSelector((state) => state.currentUser.user);
+
   const [likeId, setLikeId] = useState(false);
   const [replyList, setReplyList] = useState([]);
   const [user, setUser] = useState(false);
   const currentCommentId = item.id;
+
+  const [showReplies, setShowReplies] = useState(false);
 
   useEffect(async () => {
     setUser(await callGetUserInfo(item.creator, token));
@@ -45,9 +51,24 @@ const CommentItem = ({
   }, []);
 
   useEffect(async () => {
-    const likedStatus = await checkLikeStatus(track.id, item.id, user.id);
-    setLikeId(likedStatus);
-  }, [user]);
+    if (isReply) {
+      setLikeId(
+        await checkReplyLikeStatus(
+          track.id,
+          originalComment,
+          item.id,
+          currentUser.id
+        )
+      );
+    } else {
+      const likedStatus = await checkLikeStatus(
+        track.id,
+        item.id,
+        currentUser.id
+      );
+      setLikeId(likedStatus);
+    }
+  }, [currentUser]);
 
   const renderItem = ({ item }) => {
     const newItem = item;
@@ -99,7 +120,7 @@ const CommentItem = ({
                   <Text style={styles.replyText}>Reply</Text>
                 </Pressable>
               )}
-              {item.creator == user.id ? (
+              {item.creator == currentUser.id ? (
                 <Pressable
                   onPress={async () => {
                     if (isReply) {
@@ -131,7 +152,7 @@ const CommentItem = ({
                         track.id,
                         originalComment,
                         item.id,
-                        user.id
+                        currentUser.id
                       )
                     );
                   } else {
@@ -150,20 +171,20 @@ const CommentItem = ({
                       track.id,
                       originalComment,
                       item.id,
-                      user.id
+                      currentUser.id
                     );
                     setLikeId(
                       await checkReplyLikeStatus(
                         track.id,
                         originalComment,
                         item.id,
-                        user.id
+                        currentUser.id
                       )
                     );
                   } else {
-                    await likeComment(track.id, item.id, user.id);
+                    await likeComment(track.id, item.id, currentUser.id);
                     setLikeId(
-                      await checkLikeStatus(track.id, item.id, user.id)
+                      await checkLikeStatus(track.id, item.id, currentUser.id)
                     );
                   }
                 }}
@@ -179,11 +200,56 @@ const CommentItem = ({
         </View>
       </View>
       <View>
-        <FlatList
-          data={replyList}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+        {showReplies ? (
+          <>
+            <Pressable
+              style={{ marginTop: -5, marginLeft: 50, flexDirection: "row" }}
+              onPress={() => {
+                setShowReplies(false);
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: CustomColors.dark.formBackground,
+                  fontFamily: "PoppinsBold",
+                }}
+              >{`Hide ${replyList.length} replies...`}</Text>
+              <AntDesign
+                name="up"
+                size={10}
+                color={CustomColors.dark.formBackground}
+              />
+            </Pressable>
+            <FlatList
+              data={replyList}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+            />
+          </>
+        ) : replyList ? (
+          replyList.length > 0 ? (
+            <Pressable
+              style={{ marginTop: -5, marginLeft: 50, flexDirection: "row" }}
+              onPress={() => {
+                setShowReplies(true);
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: CustomColors.dark.formBackground,
+                  fontFamily: "PoppinsBold",
+                }}
+              >{`View ${replyList.length} replies...`}</Text>
+              <AntDesign
+                name="down"
+                size={10}
+                color={CustomColors.dark.formBackground}
+              />
+            </Pressable>
+          ) : null
+        ) : null}
       </View>
     </>
   );

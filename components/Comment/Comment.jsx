@@ -73,7 +73,7 @@ const Comment = () => {
           style={styles.commentInput}
           ref={textInputRef}
           placeholder={inputPlaceholder}
-          placeholderTextColor={CustomColors.dark.background}
+          placeholderTextColor="#313131"
           onBlur={() => {
             setInputPlaceholder("Add a comment...");
           }}

@@ -8,8 +8,9 @@ import {
 import { Text, View } from "../components/Themed";
 import styles from "../constants/styles";
 import Gallery from "../components/Gallery/Gallery";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  callGetCurrentlyPlaying,
   callGetCurrentUser,
   callGetNewReleases,
   callGetPlaylists,
@@ -33,8 +34,8 @@ import {
   setPlayingSound,
   setSoundSource,
 } from "../redux/features/playingSound";
-
-const name = "Steve";
+import CurrentlyPlaying from "../components/currentlyPlaying";
+import { useIsFocused } from "@react-navigation/native";
 
 if (typeof Buffer === "undefined") {
   global.Buffer = require("buffer").Buffer;
@@ -45,13 +46,15 @@ const HomeScreen = ({ route, navigation }) => {
   const currentUser = useSelector((state) => state.currentUser.user);
   const playingSound = useSelector((state) => state.playingSound.value);
   const dispatch = useDispatch();
+  const focus = useIsFocused();
 
-  const [topArtists, setTopArtists] = useState();
-  const [topTracks, setTopTracks] = useState();
-  const [recentlyPlayed, setRecentlyPlayed] = useState();
-  const [playlists, setPlaylists] = useState(false);
-  const [newReleases, setNewReleases] = useState();
-  const [topPlaylists, setTopPlaylists] = useState();
+  const [topArtists, setTopArtists] = useState([]);
+  const [topTracks, setTopTracks] = useState([]);
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+  const [newReleases, setNewReleases] = useState([]);
+  const [topPlaylists, setTopPlaylists] = useState([]);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState();
 
   const [loading, setLoading] = useState(true);
 
@@ -65,16 +68,29 @@ const HomeScreen = ({ route, navigation }) => {
     setTopArtists(await callGetUsersTop("artists", "short_term", token));
     setTopTracks(await callGetUsersTop("tracks", "short_term", token));
     setRecentlyPlayed(await callRecentlyPlayed(token));
+    setCurrentlyPlaying(await callGetCurrentlyPlaying(token));
     setPlaylists(await callGetPlaylists(token));
     dispatch(setCurrentUser(await callGetCurrentUser(token)));
     setLoading(false);
   }, []);
+
+  // console.log("PLAYED", recentlyPlayed);
+
+  // useEffect(async () => {
+  //   if (focus) {
+  //     console.log("called!");
+  //     setCurrentlyPlaying(await callGetCurrentlyPlaying(token));
+  //   } else {
+  //     console.log("not focused");
+  //   }
+  // }, []);
 
   useEffect(async () => {
     if (currentUser) {
       if (currentUser.country) {
         setNewReleases(await callGetNewReleases(currentUser.country, token));
         setTopPlaylists(await callGetTopPlaylists(currentUser.country, token));
+        // setLoading(false);
       }
     }
   }, [currentUser]);
@@ -177,23 +193,26 @@ const HomeScreen = ({ route, navigation }) => {
                 >
                   <Image
                     source={require("../assets/images/DiscoveryLogoWhite.png")}
-                    style={{ height: 30, width: 30, marginLeft: 5 }}
+                    style={{ height: 35, width: 35, marginLeft: 5 }}
                   />
                 </Pressable>
-                <Text style={styles.pageHeader}>Today's Overview</Text>
+                <Text style={styles.pageHeader}>Overview</Text>
                 <Pressable
-                  onPress={async () => {
-                    await SecureStore.setItemAsync("ACCESS_TOKEN", "");
-                    await SecureStore.setItemAsync("REFRESH_TOKEN", "");
-                    await SecureStore.setItemAsync("EXPIRATION_TIME", "");
+                  onPress={() => {
                     navigation.navigate("Root", {
                       screen: "LogInScreen",
+                      params: {
+                        signedOut: true,
+                      },
                     });
+                    SecureStore.setItemAsync("ACCESS_TOKEN", "");
+                    SecureStore.setItemAsync("REFRESH_TOKEN", "");
+                    SecureStore.setItemAsync("EXPIRATION_TIME", "");
                   }}
                 >
                   <Ionicons
                     name="exit-outline"
-                    size={30}
+                    size={35}
                     color={CustomColors.dark.primaryColor}
                   />
                 </Pressable>
@@ -201,19 +220,44 @@ const HomeScreen = ({ route, navigation }) => {
             )}
 
             <View>
-              <Gallery
-                title="Your Top Artists"
-                data={topArtists}
-                isTop={true}
-              />
-              <Gallery title="Your Top Songs" data={topTracks} isTop={true} />
-              <Gallery title="Your Playlists" data={playlists} />
-              <Gallery title="New Releases" data={newReleases} />
-              <Gallery title="Popular Playlists" data={topPlaylists} />
-              <VerticalList
-                title="Your Recently Played"
-                data={recentlyPlayed}
-              />
+              {/* {currentlyPlaying ? (
+                <VerticalList
+                  title="Currently Playing"
+                  data={[currentlyPlaying]}
+                  isCurrentlyPlaying={true}
+                />
+              ) : null} */}
+
+              {topArtists?.length > 0 ? (
+                <Gallery
+                  title="Your Top Artists"
+                  data={topArtists}
+                  isTop={true}
+                />
+              ) : null}
+
+              {topTracks?.length > 0 ? (
+                <Gallery title="Your Top Songs" data={topTracks} isTop={true} />
+              ) : null}
+
+              {playlists?.length > 0 ? (
+                <Gallery title="Your Playlists" data={playlists} />
+              ) : null}
+
+              {newReleases ? (
+                <Gallery title="New Releases" data={newReleases} />
+              ) : null}
+
+              {topPlaylists ? (
+                <Gallery title="Popular Playlists" data={topPlaylists} />
+              ) : null}
+
+              {recentlyPlayed ? (
+                <VerticalList
+                  title="Your Recently Played"
+                  data={recentlyPlayed}
+                />
+              ) : null}
             </View>
           </>
         )}

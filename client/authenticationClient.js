@@ -4,11 +4,13 @@ import * as Crypto from "expo-crypto";
 import * as Random from "expo-random";
 import { makeRedirectUri, startAsync } from "expo-auth-session";
 
-const redirectUrl = makeRedirectUri({
-  scheme: "myapp",
-  preferLocalhost: false,
-  isTripleSlashed: true,
-});
+// const redirectUrl = makeRedirectUri({
+//   scheme: "https://auth.expo.io/@discovery/discovery",
+//   preferLocalhost: false,
+//   isTripleSlashed: false,
+// });
+
+const redirectUrl = "https://auth.expo.io/@discovery/discovery";
 
 const clientId = "4f0fe728346848b691b85459ebeadb89";
 export function base64URLEncode(str) {
@@ -59,6 +61,7 @@ export const getAuthorizationCode = async () => {
       "user-top-read",
       "user-library-read",
       "user-library-modify",
+      "user-read-currently-playing",
     ];
     const scopes = scopesArr.join(" ");
     const requestUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${clientId}${
@@ -71,7 +74,7 @@ export const getAuthorizationCode = async () => {
       authUrl: requestUrl,
     });
   } catch (err) {
-    console.error(err);
+    console.log(err);
   }
   if (result.type !== "cancel") {
     return [result.params.code, currentVerifier];
@@ -95,6 +98,7 @@ export const getTokens = async (setTokenReceived, dispatch) => {
       );
       dispatch(setToken(existingToken));
       setTokenReceived(true);
+      return true;
     }
   } else {
     try {
@@ -126,8 +130,12 @@ export const getTokens = async (setTokenReceived, dispatch) => {
       console.log("Stored new tokens.");
       dispatch(setToken(accessToken));
       setTokenReceived(true);
+      return true;
     } catch (err) {
-      console.error(err);
+      console.log(err);
+      dispatch(setToken(""));
+      setTokenReceived(false);
+      return false;
     }
   }
 };

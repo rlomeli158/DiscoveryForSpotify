@@ -504,11 +504,37 @@ export const callGetTopPlaylists = async (country, token) => {
     });
 
     let responseJson = await spotifyResponse.json();
-    // console.log();
     let playlists = responseJson.playlists.items;
 
     return playlists;
   } catch (err) {
+    console.log(err);
+  }
+};
+
+export const callGetCurrentlyPlaying = async (token) => {
+  let spotifyUrl = `https://api.spotify.com/v1/me/player/currently-playing`;
+
+  try {
+    let spotifyResponse = await fetch(spotifyUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (spotifyResponse.status == "204") {
+      return;
+    } else if (spotifyResponse.status == "200") {
+      let responseJson = await spotifyResponse.json();
+      // console.log(responseJson);
+
+      let currentlyPlaying = responseJson.item;
+
+      return currentlyPlaying;
+    }
+  } catch (err) {
+    console.log();
     console.log(err);
   }
 };

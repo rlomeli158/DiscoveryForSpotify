@@ -127,6 +127,7 @@ export const likeComment = async (trackId, commentId, userId) => {
       }
     );
   } catch (e) {
+    console.log("hi");
     console.log(e);
   }
 };

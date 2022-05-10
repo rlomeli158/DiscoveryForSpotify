@@ -15,8 +15,8 @@ const TopScreen = ({ route, navigation }) => {
   const token = useSelector((state) => state.token.value);
   const [loading, setLoading] = useState(true);
   const [tracksTabSelected, setTracksTabSelected] = useState(true);
-  const [topTracks, setTopTracks] = useState(false);
-  const [topArtists, setTopArtists] = useState(false);
+  const [topTracks, setTopTracks] = useState([]);
+  const [topArtists, setTopArtists] = useState([]);
   const possibleTerms = ["short_term", "medium_term", "long_term"];
   const [termIndex, setTermIndex] = useState(0);
   const [size, setSize] = useState("medium");
@@ -66,10 +66,25 @@ const TopScreen = ({ route, navigation }) => {
         <View>
           {loading ? (
             loadingIcon()
-          ) : tracksTabSelected ? (
-            <Grid data={topTracks} size={size} />
+          ) : topTracks?.length > 0 && topArtists?.length > 0 ? (
+            tracksTabSelected ? (
+              <Grid data={topTracks} size={size} />
+            ) : (
+              <Grid data={topArtists} size={size} />
+            )
           ) : (
-            <Grid data={topArtists} size={size} />
+            <View>
+              <Text
+                style={{
+                  marginTop: 50,
+                  textAlign: "center",
+                  textAlignVertical: "center",
+                  fontSize: 30,
+                }}
+              >
+                No top stats yet!
+              </Text>
+            </View>
           )}
         </View>
       </ScrollView>

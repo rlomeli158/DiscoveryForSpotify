@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   },
   deleteText: {
     fontSize: 10,
-    color: CustomColors.dark.formBackground,
+    color: CustomColors.dark.close,
     fontFamily: "PoppinsBold",
   },
   comment: {
@@ -443,18 +443,14 @@ const styles = StyleSheet.create({
   logInButtonText: {
     fontSize: 17,
   },
-  // //Open in Spotify
-  // logInButton: {
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   paddingVertical: 10,
-  //   borderRadius: 20,
-  //   elevation: 3,
-  //   // backgroundColor: CustomColors.dark.primaryColor,
-  //   backgroundColor: "#1DB954",
-  //   width: "50%",
-  //   alignSelf: "center",
-  //   marginTop: 20,
-  // },
+  // Currently playing
+  currentlyPlayingContainer: {
+    flex: 1,
+    marginRight: 10,
+    borderRadius: 30,
+    backgroundColor: "#313131",
+    flexDirection: "row",
+    height: screenWidth / 4,
+  },
 });
 export default styles;

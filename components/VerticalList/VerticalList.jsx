@@ -6,8 +6,15 @@ import { Text, View } from "../Themed";
 import { FontAwesome } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { playTrack, stopTrack } from "../../screens/InfoScreenTrack";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "@gorhom/bottom-sheet";
 
-const VerticalList = ({ title, data, albumImage = "", numberOfTracks }) => {
+const VerticalList = ({
+  title,
+  data,
+  albumImage = "",
+  numberOfTracks,
+  isCurrentlyPlaying = false,
+}) => {
   const navigation = useNavigation();
   const playingSound = useSelector((state) => state.playingSound.value);
   const soundSource = useSelector((state) => state.playingSound.source);
@@ -38,21 +45,34 @@ const VerticalList = ({ title, data, albumImage = "", numberOfTracks }) => {
 
           let trackUrl;
 
-          if (item.preview_url) {
-            trackUrl = item.preview_url;
-          } else if (item.track.preview_url) {
-            trackUrl = item.track.preview_url;
-          } else if (item.album.preview_url) {
-            trackUrl = item.album.preview_url;
+          try {
+            if (item.preview_url) {
+              trackUrl = item.preview_url;
+            } else if (item.track.preview_url) {
+              trackUrl = item.track.preview_url;
+            } else if (item.album) {
+              if (item.album.preview_url) {
+                trackUrl = item.album.preview_url;
+              }
+            }
+          } catch (err) {
+            console.error("ERROR", err, songInfoArray);
           }
 
           return (
             <Pressable
               onPress={() => {
-                navigation.push("InfoScreenTrack", {
-                  type: "track",
-                  id: numberOfTracks ? item.id : item.track.id,
-                });
+                if (isCurrentlyPlaying) {
+                  navigation.push("InfoScreenTrack", {
+                    type: "track",
+                    id: item.id,
+                  });
+                } else {
+                  navigation.push("InfoScreenTrack", {
+                    type: "track",
+                    id: numberOfTracks ? item.id : item.track.id,
+                  });
+                }
               }}
             >
               <View style={styles.songContainer}>
@@ -60,7 +80,19 @@ const VerticalList = ({ title, data, albumImage = "", numberOfTracks }) => {
                 <View style={styles.listText}>
                   {renderSongInfo(songName, artists, artistName, playlistName)}
                 </View>
-                {trackUrl ? (
+                {isCurrentlyPlaying ? (
+                  <Image
+                    style={{
+                      resizeMode: "contain",
+                      height: SCREEN_HEIGHT / 15,
+                      width: SCREEN_WIDTH / 4,
+                      alignItems: "flex-end",
+                      alignSelf: "center",
+                      justifyContent: "flex-end",
+                    }}
+                    source={require("../../assets/images/audio-wave.gif")}
+                  />
+                ) : trackUrl ? (
                   playingSound && soundSource == trackUrl ? (
                     <Pressable
                       onPress={() => {
